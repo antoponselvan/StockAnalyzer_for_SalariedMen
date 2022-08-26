@@ -1,1 +1,1 @@
-# SalariedMan-sStockAnalyzer
+# StockAnalyzer for Salaried Men
