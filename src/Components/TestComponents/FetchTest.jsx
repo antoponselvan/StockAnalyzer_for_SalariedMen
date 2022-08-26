@@ -5,7 +5,7 @@ const FetchTest = () => {
   const [txt2, setTxt2] = useState("b")
   const [txt3, setTxt3] = useState("c")
   useEffect(()=>{
-    fetch("https://api.aletheiaapi.com/FinancialFactTrend?id=AAPL&label=8&after=20140101&key=30A5A844748745EAB1A2AE3BE06E4687")
+    fetch("https://api.aletheiaapi.com/FinancialFactTrend?id=AAPL&label=8&after=20140101&key=")
     .then((response)=>response.json())
     .then((data)=>{
       setTxt1(Object.keys(data))
