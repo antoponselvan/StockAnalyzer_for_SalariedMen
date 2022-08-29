@@ -6,7 +6,7 @@ function App() {
 
   return (
     <>
-      <h1>Salaried (wo)Man's Stock Analyzer</h1>
+      <h1>salaryMan's Stock Analyzer</h1>
       <FetchTest/>
     </>
   )
