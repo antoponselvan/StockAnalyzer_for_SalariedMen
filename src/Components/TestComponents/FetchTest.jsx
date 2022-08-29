@@ -7,7 +7,6 @@ const FetchTest = () => {
   const [txt4, setTxt4] = useState("d")
   const [txt5, setTxt5] = useState(["e","f"])
   useEffect(()=>{
-   
     fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/companyfacts/CIK0001318605.json')}`)
     .then(response => {
       if (response.ok) return response.json()
@@ -25,9 +24,6 @@ const FetchTest = () => {
       setTxt3(dataObj["us-gaap"].NetIncomeLoss.units.USD[6].val)
       setTxt5(Object.keys(dataObj["us-gaap"]))
     })
-
-  
-  
   },[])
     
   return (
