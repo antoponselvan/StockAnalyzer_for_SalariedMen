@@ -6,6 +6,7 @@ const FetchTest = () => {
   const [txt3, setTxt3] = useState("c")
   const [txt4, setTxt4] = useState("d")
   const [txt5, setTxt5] = useState(["e","f"])
+  const [txt6, setTxt6] = useState(0)
   useEffect(()=>{
     fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/companyfacts/CIK0001318605.json')}`)
     .then(response => {
@@ -24,6 +25,15 @@ const FetchTest = () => {
       setTxt3(dataObj["us-gaap"].NetIncomeLoss.units.USD[6].val)
       setTxt5(Object.keys(dataObj["us-gaap"]))
     })
+
+    fetch('https://api.finage.co.uk/agg/stock/MSFT/1/year/2010-02-05/2022-02-07?apikey=API_KEY60W7U5P3ULR5HAWZN410J2IXX8SVNQGF')
+    .then(response => {return response.json()
+    })
+    .then(data => {
+      console.log(data)
+      setTxt6(data.results[0].h)
+    })
+
   },[])
     
   return (
@@ -32,6 +42,7 @@ const FetchTest = () => {
     <p>Start Period: {txt1}</p>
     <p>End Period: {txt2}</p>
     <p>Value: {txt3}</p>
+    <p>Msft high: {txt6}</p>
     <p>Misc Info: {txt5.map((item)=><p>{item}</p>)}</p>
     </>
   )
