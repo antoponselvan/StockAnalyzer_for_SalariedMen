@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const MainNavBar = () => {
 
-  const [requestedPage, setRequestedPage] = useState("Index");
+  const [requestedPage, setRequestedPage] = useState("Home");
 
   const handleClick = (selectedPage) => () => setRequestedPage(selectedPage) 
 

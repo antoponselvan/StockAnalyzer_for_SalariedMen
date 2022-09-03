@@ -1,7 +1,9 @@
-p{
-    word-wrap: break-word
+a{
+    min-width:160px
 }
 
-a{
-    min-width:200px
+.SearchList{
+    position: relative;
+    bottom: 0px;
+    z-index: 1
 }

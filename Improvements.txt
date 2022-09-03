@@ -1,0 +1,25 @@
+1) Search Stock drop-down to auto-activate
+2) Take latest year / quarter for list of companies
+3) ReFactor code using useReducer & useContext & searchParam
+
+
+
+Imp Para:
+Revenues
+NetIncomeLoss
+
+Assets
+Liabilities
+LiabilitiesAndStockholdersEquity
+StockholdersEquity
+
+EarningsPerShareBasic
+EarningsPerShareBasicAndDiluted
+EarningsPerShareDiluted
+
+WeightedAverageNumberOfDilutedSharesOutstanding
+WeightedAverageNumberOfShareOutstandingBasicAndDiluted
+CommonStockSharesIssued
+CommonStockSharesOutstanding
+CommonStockSharesAuthorized
+CommonStockValue
