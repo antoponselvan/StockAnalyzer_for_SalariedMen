@@ -1,7 +1,7 @@
 1) Search Stock drop-down to auto-activate
 2) Take latest year / quarter for list of companies
 3) ReFactor code using useReducer & useContext & searchParam
-
+4) With no company search result - display "No company found"
 
 
 Imp Para:
@@ -17,6 +17,7 @@ EarningsPerShareBasic
 EarningsPerShareBasicAndDiluted
 EarningsPerShareDiluted
 
+CommonStockSharesIssued
 WeightedAverageNumberOfDilutedSharesOutstanding
 WeightedAverageNumberOfShareOutstandingBasicAndDiluted
 CommonStockSharesIssued

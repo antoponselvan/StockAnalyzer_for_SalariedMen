@@ -1,23 +1,66 @@
-import { useState } from "react";
-const companyPara = ["Revenues", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "NetIncomeLoss", "LiabilitiesAndStockholdersEquity", "StockholdersEquity", "EarningsPerShareBasicAndDiluted", "EarningsPerShareDiluted", "CommonStockSharesIssued"];
-const StockSearchBar = ({companyList, selectedStockCIK, setSelectedStockCIK, setCompanyData}) => {
+import { useState, useEffect } from "react";
+// const companyParaList = [{ParaName: "Revenues", Units:"USD"}]
+const companyParaList = [{ParaName: "Revenues", Units:"USD"}, {ParaName: "NetIncomeLoss", Units:"USD"}, {ParaName: "Assets", Units:"USD"}, {ParaName: "Liabilities", Units:"USD"}, {ParaName: "StockholdersEquity", Units:"USD"}, {ParaName: "EarningsPerShareDiluted", Units:"USD/shares"}, {ParaName: "CommonStockSharesIssued", Units:"shares"}];
+// "LiabilitiesAndStockholdersEquity", "StockholdersEquity", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "EarningsPerShareBasicAndDiluted"
+
+const StockSearchBar = ({selectedStockCIK, setSelectedStockCIK, setCompanyData, companyData}) => {
 //   const [stockSearchText, setStockSearchText] = useState("");
   let stockSearchText = "";
   const [stockSearchResults, setStockSearchResults] = useState([{Name:"", CIK:"0"}])
   
-  const handleChange = (event) => {
+  const [companyList, setcompanyList] = useState([{name:"", CIK:"0000320193"}]) 
+  // useEffect Fn to load list of stocks
+ 
+    useEffect(()=>{
+        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/frames/us-gaap/NetIncomeLoss/USD/CY2021.json')}`)
+        .then(response => {
+            if (response.ok) return response.json()
+            throw new Error('Network response was not ok.')
+        })
+        .then(data => {
+            setcompanyList((JSON.parse(data.contents)).data.map((companyInfo)=>{return {"Name":companyInfo.entityName, "CIK":companyInfo.cik}}))
+        })
+    },[])
+
+    useEffect(()=>{
+        if (selectedStockCIK !== "-1"){
+            for (let para of companyParaList){
+                fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/companyconcept/CIK'+String(selectedStockCIK)+'/us-gaap/'+(para.ParaName)+'.json')}`)
+                .then(response => {
+                    if (response.ok) return response.json()
+                    throw new Error('Network response was not ok.')
+                })
+                .then(data => {
+                    // console.log(data)
+                    let tempdata = {start:[], end:[], val:[]};
+                    let templabel = ((JSON.parse(data.contents)).label)
+                    console.log(templabel)
+                    let tempParaData = (JSON.parse(data.contents)).units[para.Units]
+                    tempParaData.forEach(element => {
+                        if (element.start) tempdata.start.push(element.start)
+                        tempdata.end.push(element.end)
+                        tempdata.val.push(element.val)
+                    });
+                    // console.log(tempdata)
+                    // companyData["Revenues"] = tempdata
+                    // setCompanyData(()=> { return {...companyData, [para.ParaName]:tempdata}})
+                    setCompanyData({...companyData, [para.ParaName]:tempdata})
+                })
+            }
+        }
+    }, [selectedStockCIK])
+
+    const handleChange = (event) => {
     stockSearchText = (event.target.value);
     // setStockSearchText(event.target.value)
     setStockSearchResults(companyList.filter((company)=>{
         return (company.Name.toLowerCase().search(stockSearchText.toLowerCase()) !== -1)
     }))
-  }
+    }
   
-  const handleListClick=(CIK)=>{
-    // console.log(CIK, CIK.length, (typeof CIK))
-    // setSelectedStockCIK(company.CIK)
+    const handleListClick=(CIK)=>{
     return () => {
-        console.log(CIK)
+        // console.log(CIK)
         if (CIK > 999999999){
             setSelectedStockCIK(String(CIK))
         } else if (CIK > 99999999){
@@ -39,35 +82,13 @@ const StockSearchBar = ({companyList, selectedStockCIK, setSelectedStockCIK, set
         } else{
             setSelectedStockCIK("000000000"+String(CIK))        
         }
-        console.log(selectedStockCIK)
-
-        for (let para of companyPara){
-            fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/companyconcept/CIK'+String(selectedStockCIK)+'/us-gaap/'+para+'.json')}`)
-            .then(response => {
-                if (response.ok) return response.json()
-                throw new Error('Network response was not ok.')
-            })
-            .then(data => {
-                console.log(data)
-                console.log((data.contents))
-            })
+        // console.log(selectedStockCIK)        
         }
+    }
 
-        // fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/companyconcept/CIK'+String(selectedStockCIK)+'/us-gaap/NetIncomeLoss.json')}`)
-        // .then(response => {
-        //     if (response.ok) return response.json()
-        //     throw new Error('Network response was not ok.')
-        // })
-        // .then(data => {
-        //     console.log(data)
-        //     console.log((data.contents))
-        // })
+    console.log(companyData)
 
-        }
-  }
-
-
-  return (
+    return (
     <div className="mb-3 d-flex">  
         <div className="dropdown">
             <button className="dropdown-toggle btn" data-bs-toggle="dropdown">
@@ -81,7 +102,7 @@ const StockSearchBar = ({companyList, selectedStockCIK, setSelectedStockCIK, set
         </div>             
         <input onChange={handleChange} className="form-control" placeholder="Search Stock"/>                
     </div>
-  )
-}
+    )
+    }
 
 export default StockSearchBar

@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom"
+import { useState } from "react";
 
-const StockAnalyzerTabs = ({requestedStockAnalyzerPage, setRequestedStockAnalyzerPage}) => {
+const StockAnalyzerTabs = () => {
   
+  const [requestedStockAnalyzerPage, setRequestedStockAnalyzerPage] = useState("summary");
   const handleClick = (clickedLi) => () => setRequestedStockAnalyzerPage(clickedLi)
 
   return (
