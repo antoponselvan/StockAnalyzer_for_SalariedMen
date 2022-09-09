@@ -1,14 +1,29 @@
 import {Link, useNavigate} from "react-router-dom"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const MainNavBar = () => {
 
   const [requestedPage, setRequestedPage] = useState("Home");
   const navigate = useNavigate()
 
+  useEffect(()=>{
+    switch (requestedPage){
+      case "Home": {
+        navigate("/")
+        break;
+      } case "StockAnalyzer":{
+        navigate("/StockAnalyzer")
+        break;
+      } case "Recommendations":{
+        navigate("/Recommendations")
+        break;
+      }
+    }
+  },[requestedPage])
+
   const handleClick = (selectedPage) => () => {
     setRequestedPage(selectedPage);
-    navigate("/"+selectedPage)
+    // navigate("/"+selectedPage)
   } 
 
   return (
@@ -16,9 +31,9 @@ const MainNavBar = () => {
         <div className="container-fluid">          
           <div className="collapse navbar-collapse justify-content-center">
             <div className="navbar-nav">
-            <Link to="/"><li className={"nav-link border text-center "+((requestedPage==="Home")? "text-light bg-danger" : "")} onClick={handleClick("Home")}>Home</li></Link>
-            <Link to="/StockAnalyzer"><li className={"nav-link border  text-center "+((requestedPage==="StockAnalyzer")? "text-light bg-danger" : "")} onClick={handleClick("StockAnalyzer")}>Stock Analyzer</li></Link>
-            <Link to="/Recommendations"><li className={"nav-link border text-center "+((requestedPage==="Recommendations")? "text-light bg-danger" : "")} onClick={handleClick("Recommendations")}>Recommendations</li></Link>
+            <li className={"nav-link border text-center mainNavItem "+((requestedPage==="Home")? "text-light bg-danger" : "")} onClick={handleClick("Home")}>Home</li>
+            <li className={"nav-link border  text-center mainNavItem "+((requestedPage==="StockAnalyzer")? "text-light bg-danger" : "")} onClick={handleClick("StockAnalyzer")}>Stock Analyzer</li>
+            <li className={"nav-link border text-center mainNavItem " + ((requestedPage==="Recommendations")? "text-light bg-danger" : "")} onClick={handleClick("Recommendations")}>Recommendations</li>
             </div>
           </div>
         </div>

@@ -4,29 +4,28 @@ import StockAnalyzerTabs from "../Components/StockAnalyzerTabs"
 import financialFreedom from "../../img/financialFreedom.webp"
 import StockSearchBar from "../Components/StockSearchBar"
 
-const StockAnalyzerLayout = ({selectedStockCIK, setSelectedStockCIK, setCompanyData}) => {
+const StockAnalyzerLayout = ({selectedStock, setSelectedStock, setCompanyData, companyData, calculatedCompanyData, setCalculatedCompanyData}) => {
   
-  console.log(selectedStockCIK)
   
   return (
     <>
-    <div className="row justify-content-center container-fluid">
-      <div className="col-md-9 col-lg-8 col-sm-12 m-3">
-          <StockSearchBar selectedStockCIK={selectedStockCIK} setSelectedStockCIK={setSelectedStockCIK} setCompanyData={setCompanyData}/>
-          
-        <div className="text-center">
-          { (selectedStockCIK === "-1") ? 
-          <>
-          <h4>Evaluate Your Stock for Financial Freedom</h4>
-          <img src={financialFreedom}/> 
-          </>
-          :
-          <>
-          <StockAnalyzerTabs/>
-          <Outlet/>
-          </>
-          }
-        </div>  
+    <div className="container-fluid border">
+      <div className="row justify-content-center text-center" >
+        <div className="col-md-9 col-lg-8 col-sm-12 m-3 align-items-center">
+          <div className="row">
+            <StockSearchBar selectedStock={selectedStock} setSelectedStock={setSelectedStock} setCompanyData={setCompanyData} companyData={companyData}/>
+          </div>              
+          {(selectedStock.cik === "-1") ? 
+          <div className="row">
+            <h4>Evaluate Your Stock for Financial Freedom</h4>
+            <img src={financialFreedom}/> 
+          </div>
+              :
+          <div className="row">
+            <StockAnalyzerTabs/>              
+            <Outlet/>
+          </div>}
+        </div>
       </div>
     </div>
     </>

@@ -9,10 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "browserify": "^17.0.0",
     "debug": "^4.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
+    "require": "^2.4.20",
     "yahoo-stock-api": "^1.1.10"
   },
   "devDependencies": {

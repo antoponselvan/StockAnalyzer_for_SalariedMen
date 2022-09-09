@@ -1,0 +1,18 @@
+Issue with using yahoo-stock-api:
+- works using node.js
+- While using in Veet --> because of use of "require" module, browser doesnt understand. There seems to be issue from 2 side - Browser doesnt understand some of Node.js specific issues & Veet also doesnt seems to have some integration issue
+- Tried Following:
+(a) Import module - THrows error "Cannot call http from client:
+(b) Use of browserify as per Veet portal recomm
+ - Veet server goes down
+(https://github.com/vitejs/vite/discussions/4479)
+(c) Tried browserify to create a bundled JS file:
+- Enabled script run in Windows, but get following error
+
+Error: Parsing file C:\Users\fiant\Desktop\FIAP\01 Software Engineering\GA\03 Projects\99 Misc\yahooLibTest\node_modules\undici\lib\fetch\headers.js: Unexpected token (405:44)
+
+
+
+Possible Options:
+- Create HTML parsing code
+- Run this module on AWS lambda & expose API gateway

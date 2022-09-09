@@ -1,88 +1,103 @@
-import { useState, useEffect } from "react";
-// const companyParaList = [{ParaName: "Revenues", Units:"USD"}]
+import { useState, useEffect, useRef } from "react";
+// import getHistoricalPrices from 'yahoo-stock-api'
+// import {getHistoricalPrices} from 'yahoo-stock-api'
+// import yahooStockAPI from 'yahoo-stock-api'
+
 const companyParaList = [{ParaName: "Revenues", Units:"USD"}, {ParaName: "NetIncomeLoss", Units:"USD"}, {ParaName: "Assets", Units:"USD"}, {ParaName: "Liabilities", Units:"USD"}, {ParaName: "StockholdersEquity", Units:"USD"}, {ParaName: "EarningsPerShareDiluted", Units:"USD/shares"}, {ParaName: "CommonStockSharesIssued", Units:"shares"}];
 // "LiabilitiesAndStockholdersEquity", "StockholdersEquity", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "EarningsPerShareBasicAndDiluted"
 
-const StockSearchBar = ({selectedStockCIK, setSelectedStockCIK, setCompanyData, companyData}) => {
-//   const [stockSearchText, setStockSearchText] = useState("");
+const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, companyData, calculatedCompanyData, setCalculatedCompanyData}) => {
+
   let stockSearchText = "";
-  const [stockSearchResults, setStockSearchResults] = useState([{Name:"", CIK:"0"}])
-  
+  const [stockSearchResults, setStockSearchResults] = useState([{Name:"", CIK:"0"}])  
   const [companyList, setcompanyList] = useState([{name:"", CIK:"0000320193"}]) 
-  // useEffect Fn to load list of stocks
- 
-    useEffect(()=>{
-        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/frames/us-gaap/NetIncomeLoss/USD/CY2021.json')}`)
+  const inputRef = useRef();
+  
+    //  const yahooStockAPI  = require('yahoo-stock-api');
+    // const yahooStockAPI  = import('yahoo-stock-api');
+    // console.log("yahoo",yahooStockAPI)
+    // async function getStockPrice()  {
+    //     const startDate = new Date('08/21/2010');
+    //     const endDate = new Date('08/26/2020');
+    //     // console.log(await yahooStockAPI.getHistoricalPrices(startDate, endDate, 'AAPL', '1mo'));
+// }
+  
+// Load list of stocks
+    
+    useEffect(()=>{       
+
+        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.sec.gov/files/company_tickers.json')}`)
         .then(response => {
             if (response.ok) return response.json()
             throw new Error('Network response was not ok.')
         })
         .then(data => {
-            setcompanyList((JSON.parse(data.contents)).data.map((companyInfo)=>{return {"Name":companyInfo.entityName, "CIK":companyInfo.cik}}))
+            setcompanyList(Object.values(JSON.parse(data.contents)))
+            //cik_str, ticker, title
         })
+
     },[])
 
+    // Load financial data of stock selected
     useEffect(()=>{
-        if (selectedStockCIK !== "-1"){
+        if (selectedStock.cik !== "-1"){
             for (let para of companyParaList){
-                fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/companyconcept/CIK'+String(selectedStockCIK)+'/us-gaap/'+(para.ParaName)+'.json')}`)
+                fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://data.sec.gov/api/xbrl/companyconcept/CIK'+String(selectedStock.cik)+'/us-gaap/'+(para.ParaName)+'.json')}`)
                 .then(response => {
                     if (response.ok) return response.json()
                     throw new Error('Network response was not ok.')
                 })
                 .then(data => {
-                    // console.log(data)
                     let tempdata = {start:[], end:[], val:[]};
-                    let templabel = ((JSON.parse(data.contents)).label)
-                    console.log(templabel)
+                    // let templabel = ((JSON.parse(data.contents)).label)
+                    // console.log(templabel)
                     let tempParaData = (JSON.parse(data.contents)).units[para.Units]
                     tempParaData.forEach(element => {
                         if (element.start) tempdata.start.push(element.start)
                         tempdata.end.push(element.end)
                         tempdata.val.push(element.val)
                     });
-                    // console.log(tempdata)
-                    // companyData["Revenues"] = tempdata
-                    // setCompanyData(()=> { return {...companyData, [para.ParaName]:tempdata}})
-                    setCompanyData({...companyData, [para.ParaName]:tempdata})
+                    setCompanyData((companyData)=> {return {...companyData, [para.ParaName]:tempdata}})
                 })
             }
+            // getStockPrice()
         }
-    }, [selectedStockCIK])
+    }, [selectedStock])
+
+
+    // Load share prices of stock selected
 
     const handleChange = (event) => {
     stockSearchText = (event.target.value);
-    // setStockSearchText(event.target.value)
     setStockSearchResults(companyList.filter((company)=>{
-        return (company.Name.toLowerCase().search(stockSearchText.toLowerCase()) !== -1)
+        return ((company.title.toLowerCase().search(stockSearchText.toLowerCase()) !== -1) || (company.ticker.toLowerCase().search(stockSearchText.toLowerCase()) !== -1))
     }))
     }
   
-    const handleListClick=(CIK)=>{
+    const handleListClick=({cik, ticker, title})=>{
     return () => {
-        // console.log(CIK)
-        if (CIK > 999999999){
-            setSelectedStockCIK(String(CIK))
-        } else if (CIK > 99999999){
-            setSelectedStockCIK("0"+String(CIK))
-        } else if (CIK > 9999999){
-            setSelectedStockCIK("00"+String(CIK))
-        } else if (CIK > 999999){
-            setSelectedStockCIK("000"+String(CIK))
-        } else if (CIK > 99999){
-            setSelectedStockCIK("0000"+String(CIK))
-        } else if (CIK > 9999){
-            setSelectedStockCIK("00000"+String(CIK))
-        } else if (CIK > 999){
-            setSelectedStockCIK("000000"+String(CIK))
-        } else if (CIK > 99){
-            setSelectedStockCIK("0000000"+String(CIK))
-        } else if (CIK > 9){
-            setSelectedStockCIK("00000000"+String(CIK))
+        if (cik > 999999999){
+            setSelectedStock({cik: String(cik), ticker: ticker})
+        } else if (cik > 99999999){
+            setSelectedStock({cik: "0"+String(cik), ticker: ticker})
+        } else if (cik > 9999999){
+            setSelectedStock({cik: "00"+String(cik), ticker: ticker})
+        } else if (cik > 999999){
+            setSelectedStock({cik: "000"+String(cik), ticker: ticker})
+        } else if (cik > 99999){
+            setSelectedStock({cik: "0000"+String(cik), ticker: ticker})
+        } else if (cik > 9999){
+            setSelectedStock({cik: "00000"+String(cik), ticker: ticker})
+        } else if (cik > 999){
+            setSelectedStock({cik: "000000"+String(cik), ticker: ticker})
+        } else if (cik > 99){
+            setSelectedStock({cik: "0000000"+String(cik), ticker: ticker})
+        } else if (cik > 9){
+            setSelectedStock({cik: "00000000"+String(cik), ticker: ticker})
         } else{
-            setSelectedStockCIK("000000000"+String(CIK))        
+            setSelectedStock({cik: "000000000"+String(cik), ticker: ticker})        
         }
-        // console.log(selectedStockCIK)        
+        inputRef.current.value = title
         }
     }
 
@@ -96,11 +111,11 @@ const StockSearchBar = ({selectedStockCIK, setSelectedStockCIK, setCompanyData, 
             </button>
             <ul className="dropdown-menu">
                 {
-                    stockSearchResults.map((company)=> (<li key={company.CIK} onClick={handleListClick(company.CIK)}><button className="dropdown-item" type="button">{company.Name}</button></li>))
+                    stockSearchResults.map((company, index)=> (<li key={index} onClick={handleListClick({cik: company.cik_str, ticker:company.ticker, title:company.title})}><button className="dropdown-item" type="button">{company.ticker} : {company.title}</button></li>))
                 }
             </ul>
         </div>             
-        <input onChange={handleChange} className="form-control" placeholder="Search Stock"/>                
+        <input onChange={handleChange} ref={inputRef} className="form-control" placeholder="Search Stock"/>                
     </div>
     )
     }
