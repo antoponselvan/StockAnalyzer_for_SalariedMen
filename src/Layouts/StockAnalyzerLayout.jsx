@@ -13,7 +13,7 @@ const StockAnalyzerLayout = ({selectedStock, setSelectedStock, setCompanyData, c
       <div className="row justify-content-center text-center" >
         <div className="col-md-9 col-lg-8 col-sm-12 m-3 align-items-center">
           <div className="row">
-            <StockSearchBar selectedStock={selectedStock} setSelectedStock={setSelectedStock} setCompanyData={setCompanyData} companyData={companyData}/>
+            <StockSearchBar selectedStock={selectedStock} setSelectedStock={setSelectedStock} setCompanyData={setCompanyData} companyData={companyData} calculatedCompanyData={calculatedCompanyData} setCalculatedCompanyData={setCalculatedCompanyData}/>
           </div>              
           {(selectedStock.cik === "-1") ? 
           <div className="row">

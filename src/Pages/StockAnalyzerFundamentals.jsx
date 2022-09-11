@@ -48,7 +48,7 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
 
           <div className="row align-items-center m-2">
             <div className="col-md-9">
-              <div id="DbyEGraph" className="border" style={{height:300}}>Debt to Equity Ratio</div>
+              <div id="DbyEGraph" className="border" style={{height:300}}>Debt to Asset Ratio</div>
               <p>...</p>
             </div>
             <div className="col">

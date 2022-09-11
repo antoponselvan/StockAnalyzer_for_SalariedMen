@@ -5,15 +5,22 @@ const StockAnalyzerValuation = ({companyvaluationData}) => {
   // let PEmovingAvg = {x: [1, 2, 3, 4, 5], y: [1, 4, 3, 8, 17], name:"PE (3yr Avg)" }
   let PE = {x: companyvaluationData.details.PE.time, y: companyvaluationData.details.PE.val, name:"PE" };
   let PEmovingAvg = {x: companyvaluationData.details.PEMovingAvg.time, y: companyvaluationData.details.PEMovingAvg.val, name:"PE (3yr Avg)" }
+  let PEyAxisHighLim = 100
+  let PEyMax = Math.max(...PE.y)
+  if (PEyMax < 100) {PEyAxisHighLim=PEyMax}
 
   let PB = {x: companyvaluationData.details.PB.time, y: companyvaluationData.details.PB.val, name:"PB" };
   let PBmovingAvg = {x: companyvaluationData.details.PBMovingAvg.time, y: companyvaluationData.details.PBMovingAvg.val, name:"PB (3yr Avg)" }
 
   useEffect(()=>{
-    Plotly.newPlot( 'PeGraph', [PE,PEmovingAvg], {
-      margin: { t: 0 } } );
+    Plotly.newPlot( 'PeGraph', [PE, PEmovingAvg], {
+      margin: { t: 0 },
+      yaxis: {
+        range:[0, PEyAxisHighLim]
+      }}
+       );
 
-    Plotly.newPlot( 'PbGraph', [PB,PBmovingAvg], {
+    Plotly.newPlot( 'PbGraph', [PB, PBmovingAvg], {
       margin: { t: 0 } } );
   },[])
 
