@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import sAndP500List from "../S&P500list";
 // import getHistoricalPrices from 'yahoo-stock-api'
 // import {getHistoricalPrices} from 'yahoo-stock-api'
 // import yahooStockAPI from 'yahoo-stock-api'
@@ -8,9 +9,11 @@ const companyParaList = [{ParaName: "Revenues", Units:"USD"}, {ParaName: "NetInc
 
 const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, companyData, calculatedCompanyData, setCalculatedCompanyData}) => {
 
-  let stockSearchText = "";
+  const [stockSearchText, setStockSearchText] = useState("");
   const [stockSearchResults, setStockSearchResults] = useState([{Name:"", CIK:"0"}])  
-  const [companyList, setcompanyList] = useState([{name:"", CIK:"0000320193"}]) 
+  const [companyList, setcompanyList] = useState([{title:"", ticker:"" ,CIK:"0000320193"}]) 
+  const [stockSearchTextBoxFocus, setStockSearchTextBoxFocus] = useState(false);
+  
   const inputRef = useRef();
 
 // Load list of stocks -----------------------------------------------------
@@ -67,6 +70,7 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                 })
             })
         }        
+        (sAndP500List.findIndex((tickerItem) => (tickerItem === selectedStock.ticker)) === -1)? setCalculatedCompanyData({...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, indexConstituent: "No"}}) : setCalculatedCompanyData({...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, indexConstituent: "Yes"}})
         inputRef.current.value = selectedStock.title        
     }, [selectedStock])
 
@@ -187,7 +191,7 @@ useEffect(()=>{
         for (let index=0; index<calculatedCompanyData.valuationDetails.PE.time.length; index++){
             const adjacentPEArray = calculatedCompanyData.valuationDetails.PE.val.filter((val, index2)=>{
                 let tempTimeDiff = (Date.parse(calculatedCompanyData.valuationDetails.PE.time[index]) - Date.parse(calculatedCompanyData.valuationDetails.PE.time[index2]))/(24*3600*1000)
-                console.log("timeDiff", tempTimeDiff)
+                // console.log("timeDiff", tempTimeDiff)
                 return ((tempTimeDiff>0)&(tempTimeDiff<1000))
             }) 
             companyPEMovingAvg.time.push(calculatedCompanyData.valuationDetails.PE.time[index])
@@ -240,7 +244,7 @@ useEffect(()=>{
         for (let index=0; index<calculatedCompanyData.valuationDetails.PB.time.length; index++){
             const adjacentPBArray = calculatedCompanyData.valuationDetails.PB.val.filter((val, index2)=>{
                 let tempTimeDiff = (Date.parse(calculatedCompanyData.valuationDetails.PB.time[index]) - Date.parse(calculatedCompanyData.valuationDetails.PB.time[index2]))/(24*3600*1000)
-                console.log("timeDiff", tempTimeDiff)
+                // console.log("timeDiff", tempTimeDiff)
                 return ((tempTimeDiff>0)&(tempTimeDiff<1000))
             }) 
             companyPBMovingAvg.time.push(calculatedCompanyData.valuationDetails.PB.time[index])
@@ -251,20 +255,116 @@ useEffect(()=>{
     })
 },[calculatedCompanyData.valuationDetails.PB])
 
+// Calculate Year since company public data is available ----------------------------
+useEffect(()=>{
+    const earliestRevenueDate = Math.min(...(companyData.Revenues.end.map((dateItem)=>Date.parse(dateItem))))
+    const earliestIncomeDate = Math.min(...(companyData.NetIncomeLoss.end.map((dateItem)=>Date.parse(dateItem))))
+    // const earliestAssetsDate = Math.min 
+    const yearsSincePublic = ((Date.now()-(Math.min(earliestRevenueDate, earliestIncomeDate)))/(365*24*3600*1000)).toFixed(1)
+    setCalculatedCompanyData((calculatedCompanyData)=>{ return {...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, publicYearCount: yearsSincePublic}}})
+}, [companyData])
+
+
+// Calculate CAGR ------------------------------------------------------------------
+const calculateCAGR = (timeStamps, data) => {
+    const dataUnixTime = timeStamps.map((dateItem)=>Date.parse(dateItem))
+    const startTime = Math.min(...dataUnixTime)
+    const endTime = Math.max(...dataUnixTime)
+    if ((endTime-startTime)<(4*365*24*3600*1000)){
+        return "Inadequate Data"
+    } else {
+        const dataInitial = data.filter((val, index)=>(Date.parse(timeStamps[index])<(startTime+(2*365*24*3600*1000))))
+        const dataInitialAvg = dataInitial.reduce((prev, current)=>(prev+current),0)/dataInitial.length
+        const dataFinal = data.filter((val, index)=>(Date.parse(timeStamps[index])>(endTime)-(2*365*24*3600*1000)))
+        const dataFinalAvg = dataFinal.reduce((prev, current)=>(prev+current),0)/dataFinal.length
+        const timePeriodYrs = (endTime-startTime)/(365*24*3600*1000) - 2
+        const CAGR = ((((dataFinalAvg/dataInitialAvg)**(1/timePeriodYrs))-1)*100).toFixed(1)
+        console.log(dataInitial, dataFinal,timePeriodYrs)
+        return CAGR
+    }
+}
+
+// Revenue CAGR 
+useEffect(()=>{
+    const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.revenue.time, calculatedCompanyData.fundamentalsDetails.revenue.val)
+    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, revenueCAGR: CAGR}}})
+    }
+,[calculatedCompanyData.fundamentalsDetails.revenue])
+
+// Income CAGR
+useEffect(()=>{
+    const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.income.time, calculatedCompanyData.fundamentalsDetails.income.val)
+    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, incomeCAGR: CAGR}}})
+    }
+,[calculatedCompanyData.fundamentalsDetails.income])
+
+// DebtByEquity CAGR
+useEffect(()=>{
+    const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.debtByEquity.time, calculatedCompanyData.fundamentalsDetails.debtByEquity.val)
+    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, debtByEquityCAGR: CAGR}}})
+    }
+,[calculatedCompanyData.fundamentalsDetails.debtByEquity])
+
+// Share Price CAGR
+useEffect(()=>{
+    const CAGR = calculateCAGR(companyData.SharePrice.time, companyData.SharePrice.val)
+    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, safeguardsSummary: {...calculatedCompanyData.safeguardsSummary, sharePriceCAGR: CAGR}}})
+    }
+,[companyData.SharePrice])
+
+// useEffect(()=>{
+//     const revenueDataUnixTime = calculatedCompanyData.fundamentalsDetails.revenue.time.map((dateItem)=>Date.parse(dateItem))
+//     const startTime = Math.min(...revenueDataUnixTime)
+//     const endTime = Math.max(...revenueDataUnixTime)
+//     console.log(startTime, endTime)
+//     console.log(revenueDataUnixTime)
+//     if ((endTime - startTime) < (4*365*24*3600*1000)){
+//         setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, revenueCAGR:"Inadequate Data"}}})
+//     } else {
+//         const revenueInitial = calculatedCompanyData.fundamentalsDetails.revenue.val.filter((val, index)=>(Date.parse(calculatedCompanyData.fundamentalsDetails.revenue.time[index])<(startTime+(2*365*24*3600*1000))))
+//         const revenueInitialAvg = revenueInitial.reduce((prev,current)=>(prev+current),0)/revenueInitial.length
+//         const revenueFinal = calculatedCompanyData.fundamentalsDetails.revenue.val.filter((val, index)=>(Date.parse(calculatedCompanyData.fundamentalsDetails.revenue.time[index])>(endTime-(2*365*24*3600*1000))))
+//         const revenueFinalAvg = revenueFinal.reduce((prev,current)=>(prev+current),0)/revenueFinal.length
+//         const timePeriod = ((endTime-startTime)/(365*24*3600*1000))-2
+//         // const revenueCAGR = (Math.ceil((((revenueFinalAvg/revenueInitialAvg)**(1/timePeriod))-1)*100))
+//         const revenueCAGR = ((((revenueFinalAvg/revenueInitialAvg)**(1/timePeriod))-1)*100).toFixed(1)
+//         console.log(revenueInitial, revenueFinal, timePeriod)
+//         setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, revenueCAGR: revenueCAGR}}})
+//     }
+// },[calculatedCompanyData.fundamentalsDetails.revenue])
+
 // Event Handlers ---------------------------------------------------------------------------------- 
 // TxtBox change triggers search of stock (ticker code or company name) matching input
     const handleChange = (event) => {
-    stockSearchText = (event.target.value);
-    setStockSearchResults(companyList.filter((company)=>{
-        return ((company.title.toLowerCase().search(stockSearchText.toLowerCase()) !== -1) || (company.ticker.toLowerCase().search(stockSearchText.toLowerCase()) !== -1))
-    }))
+    setStockSearchText((stockSearchText)=>event.target.value);    
     }
+    useEffect(()=>{
+        setStockSearchResults(companyList.filter((company)=>{
+            return ((company.title.toLowerCase().search(stockSearchText.toLowerCase()) !== -1) || (company.ticker.toLowerCase().search(stockSearchText.toLowerCase()) !== -1))
+        }))
+    },[stockSearchText])
 // Click triggers fetch and all calc of company data
     const handleListClick=({cik, ticker, title})=>{
         const cikAddendum = ["000000000","00000000","0000000","000000","00000","0000","000","00","0"]
         const cikStr = cikAddendum[Math.floor(Math.log10(cik))] + String(cik)
-        return () => {setSelectedStock({cik:cikStr, ticker, title})}
+        return () => {
+            // console.log("Clicked")
+            setStockSearchTextBoxFocus(false)
+            setSelectedStock({cik:cikStr, ticker, title})}
     }
+
+    const handleInputBoxFocus = () => {
+        console.log('Focus Event')
+        setStockSearchTextBoxFocus(true)
+    }
+    const handleInputBoxBlur = () => {
+        // console.log('Blur Event')
+        // settimeout(()=>{setStockSearchTextBoxFocus(false)},100)
+        if ((stockSearchResults.length < 0.5) || (stockSearchText === ""))  {
+        setStockSearchTextBoxFocus(false)
+        }
+    }
+
 
 // Final Component return to HTML -----------------------------------------------------------------
     return (
@@ -273,13 +373,13 @@ useEffect(()=>{
             <button className="dropdown-toggle btn" data-bs-toggle="dropdown">
             <i className="bi bi-search lg m-3"></i>
             </button>
-            <ul className="dropdown-menu">
+            <ul className={"dropdown-menu"+ ((stockSearchTextBoxFocus) ? " d-block" : "")}>
                 {
-                    stockSearchResults.map((company, index)=> (<li key={index} onClick={handleListClick({cik: company.cik_str, ticker:company.ticker, title:company.title})}><button className="dropdown-item" type="button">{company.ticker} : {company.title}</button></li>))
+                    stockSearchResults.map((company, index)=> ((index < 20) && (<li key={index} onClick={handleListClick({cik: company.cik_str, ticker:company.ticker, title:company.title})}><button className="dropdown-item" type="button">{company.ticker} : {company.title}</button></li>)))
                 }
             </ul>
         </div>             
-        <input onChange={handleChange} ref={inputRef} className="form-control" placeholder="Search Stock"/>                
+        <input onChange={handleChange} onFocus={handleInputBoxFocus} onBlur={handleInputBoxBlur} ref={inputRef} className="form-control" placeholder="Search Stock"/>                
     </div>
     )
     }

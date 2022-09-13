@@ -22,7 +22,7 @@ const StockAnalyzerValuation = ({companyvaluationData}) => {
 
     Plotly.newPlot( 'PbGraph', [PB, PBmovingAvg], {
       margin: { t: 0 } } );
-  },[])
+  },[companyvaluationData])
 
   return (
     <div className="col border-start border-bottom border-end">

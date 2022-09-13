@@ -21,7 +21,7 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
     
     }], {
       margin: { t: 0 } } );
-  },[])
+  },[companyfundamentalsData])
 
   return (
     <>    
@@ -32,7 +32,7 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
               <p>...</p>
             </div>
             <div className="col">
-              <h4>CAGR: {companyfundamentalsData.summary.revenueCAGR}%</h4>
+              <h4>CAGR (%): {companyfundamentalsData.summary.revenueCAGR}</h4>
             </div>
           </div>
 
@@ -42,7 +42,7 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
               <p>...</p>
             </div>
             <div className="col">
-              <h4>CAGR: {companyfundamentalsData.summary.incomeCAGR}%</h4>
+              <h4>CAGR (%): {companyfundamentalsData.summary.incomeCAGR}</h4>
             </div>
           </div>
 
@@ -52,7 +52,7 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
               <p>...</p>
             </div>
             <div className="col">
-              <h4>CAGR: {companyfundamentalsData.summary.debtByEquityCAGR}%</h4>
+              <h4>CAGR (%): {companyfundamentalsData.summary.debtByEquityCAGR}</h4>
             </div>
           </div>
 

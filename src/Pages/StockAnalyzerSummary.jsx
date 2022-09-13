@@ -23,8 +23,9 @@ const StockAnalyzerSummary = ({companySummaryData, companySharePrice}) => {
         showlegend: false
       }
       )
-  },[])
+  },[companySharePrice])
 
+  console.log(companySummaryData.safeguardsSummary)
   return (
     <div className="col border-start border-bottom border-end">
       <div className="row align-items-center mt-4">
@@ -45,9 +46,9 @@ const StockAnalyzerSummary = ({companySummaryData, companySharePrice}) => {
             <div className="card-body">
             <h5 className="card-title">Financial Fundamentals</h5>
             <ul className="list-group list-group-flush text-start">
-              <li className="list-group-item text-dark">Revenue CAGR : {companySummaryData.fundamentalsSummary.revenueCAGR}%</li>
-              <li className="list-group-item text-dark">Income CAGR : {companySummaryData.fundamentalsSummary.incomeCAGR}%</li>
-              <li className="list-group-item text-dark">DebyByEquity CAGR: {companySummaryData.fundamentalsSummary.debtByEquityCAGR}%</li>
+              <li className="list-group-item text-dark">Revenue CAGR (%) : {companySummaryData.fundamentalsSummary.revenueCAGR}</li>
+              <li className="list-group-item text-dark">Income CAGR (%) : {companySummaryData.fundamentalsSummary.incomeCAGR}</li>
+              <li className="list-group-item text-dark">DebyByEquity CAGR (%): {companySummaryData.fundamentalsSummary.debtByEquityCAGR}</li>
             </ul>
             </div>
           </div>

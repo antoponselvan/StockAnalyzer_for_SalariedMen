@@ -23,7 +23,7 @@ function App() {
     CommonStockSharesIssued:{fy:[2011], fp:["Q4"], start:[0],  end:[0], val:[0]}})
   const [calculatedCompanyData, setCalculatedCompanyData] = useState(
     {
-      safeguardsSummary: {indexConstituent: true, publicYearCount: 10, sharePriceCAGR: 5},
+      safeguardsSummary: {indexConstituent: "Yes", publicYearCount: 10, sharePriceCAGR: 5},
       fundamentalsSummary: {revenueCAGR: 5, incomeCAGR: 4, debtByEquityCAGR:5},
       valuationSummary: {PE:10, PEIdeal:13, PB:2, PBIdeal:2.1},
       scoreSummary:{fundamentals:8, valuation:8, safeguard:10},
