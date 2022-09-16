@@ -1,0 +1,92 @@
+{
+  "companies" : [
+    {
+       "name": "Apple",
+       "ticker": "AAPL",
+       "revenueCAGR": 5,
+       "incomeCAGR": 28,
+       "debtByEquityCAGR": 1,
+       "PECurrent":10,
+       "PEIdeal":9,
+       "PBCurrent":10,
+       "PBIdeal":9,
+       "indexConstituent": "Yes",
+       "publicYearCount": 10,
+       "sharePriceCAGR": 5
+    },    
+    {
+      "name": "Facebook",
+      "ticker": "META",
+      "revenueCAGR": 5,
+      "incomeCAGR": 28,
+      "debtByEquityCAGR": 1,
+      "PECurrent":10,
+      "PEIdeal":9,
+      "PBCurrent":10,
+      "PBIdeal":9,
+      "indexConstituent": "Yes",
+      "publicYearCount": 10,
+      "sharePriceCAGR": 5
+   },
+    
+   {
+      "name": "Alphabet",
+      "ticker": "GOOGL",
+      "revenueCAGR": 5,
+      "incomeCAGR": 28,
+      "debtByEquityCAGR": 1,
+      "PECurrent":10,
+      "PEIdeal":9,
+      "PBCurrent":10,
+      "PBIdeal":9,
+      "indexConstituent": "Yes",
+      "publicYearCount": 10,
+      "sharePriceCAGR": 5
+   },
+   
+   {
+      "name": "Tesla",
+      "ticker": "TSLA",
+      "revenueCAGR": 5,
+      "incomeCAGR": 28,
+      "debtByEquityCAGR": 1,
+      "PECurrent":10,
+      "PEIdeal":9,
+      "PBCurrent":10,
+      "PBIdeal":9,
+      "indexConstituent": "Yes",
+      "publicYearCount": 10,
+      "sharePriceCAGR": 5
+   },
+
+   {
+      "name": "Alphabet",
+      "ticker": "GOOGL",
+      "revenueCAGR": 5,
+      "incomeCAGR": 28,
+      "debtByEquityCAGR": 1,
+      "PECurrent":10,
+      "PEIdeal":9,
+      "PBCurrent":10,
+      "PBIdeal":9,
+      "indexConstituent": "Yes",
+      "publicYearCount": 10,
+      "sharePriceCAGR": 5
+   },
+   
+   {
+      "name": "Tesla",
+      "ticker": "TSLA",
+      "revenueCAGR": 5,
+      "incomeCAGR": 28,
+      "debtByEquityCAGR": 1,
+      "PECurrent":10,
+      "PEIdeal":9,
+      "PBCurrent":10,
+      "PBIdeal":9,
+      "indexConstituent": "Yes",
+      "publicYearCount": 10,
+      "sharePriceCAGR": 5
+   }
+  ]
+}

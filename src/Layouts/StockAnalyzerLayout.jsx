@@ -4,7 +4,7 @@ import StockAnalyzerTabs from "../Components/StockAnalyzerTabs"
 import financialFreedom from "../../img/financialFreedom.webp"
 import StockSearchBar from "../Components/StockSearchBar"
 
-const StockAnalyzerLayout = ({selectedStock, setSelectedStock, setCompanyData, companyData, calculatedCompanyData, setCalculatedCompanyData}) => {
+const StockAnalyzerLayout = ({selectedStock, setSelectedStock, setCompanyData, companyData, calculatedCompanyData, setCalculatedCompanyData, kpiScore, setKpiScore}) => {
   
   
   return (
@@ -13,7 +13,7 @@ const StockAnalyzerLayout = ({selectedStock, setSelectedStock, setCompanyData, c
       <div className="row justify-content-center text-center" >
         <div className="col-md-9 col-lg-8 col-sm-12 m-3 align-items-center">
           <div className="row">
-            <StockSearchBar selectedStock={selectedStock} setSelectedStock={setSelectedStock} setCompanyData={setCompanyData} companyData={companyData} calculatedCompanyData={calculatedCompanyData} setCalculatedCompanyData={setCalculatedCompanyData}/>
+            <StockSearchBar selectedStock={selectedStock} setSelectedStock={setSelectedStock} setCompanyData={setCompanyData} companyData={companyData} calculatedCompanyData={calculatedCompanyData} setCalculatedCompanyData={setCalculatedCompanyData} kpiScore={kpiScore} setKpiScore={setKpiScore}/>
           </div>              
           {(selectedStock.cik === "-1") ? 
           <div className="row">

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 
-const StockAnalyzerValuation = ({companyvaluationData}) => {
+const StockAnalyzerValuation = ({companyvaluationData, kpiScore}) => {
   // let PE = {x: [1, 2, 3, 4, 5], y: [1, 2, 4, 8, 16], name:"PE" };
   // let PEmovingAvg = {x: [1, 2, 3, 4, 5], y: [1, 4, 3, 8, 17], name:"PE (3yr Avg)" }
   let PE = {x: companyvaluationData.details.PE.time, y: companyvaluationData.details.PE.val, name:"PE" };
@@ -24,6 +24,26 @@ const StockAnalyzerValuation = ({companyvaluationData}) => {
       margin: { t: 0 } } );
   },[companyvaluationData])
 
+  
+  const relevantKpiAttributes = ["PECurrent", "PBCurrent"]
+  let colorCode={}
+  for (let kpi of relevantKpiAttributes){
+    switch (kpiScore[kpi]) {
+      case 0:
+        colorCode[kpi] = "text-danger";
+        break;
+      case 1:
+        colorCode[kpi] = "text-warning"
+        break;
+      case 2:
+        colorCode[kpi] = "text-success"
+        break;
+      default:
+        colorCode[kpi] = "text-dark"
+    }
+
+  }
+
   return (
     <div className="col border-start border-bottom border-end">
       <div className="row align-items-center m-2 mt-5">
@@ -32,7 +52,7 @@ const StockAnalyzerValuation = ({companyvaluationData}) => {
           </div>
         </div>
         <div className="col">
-          <h6>PE (Current): {companyvaluationData.summary.PE}</h6>
+          <h6 className={colorCode.PECurrent}>PE (Current (2yr EPS)): {companyvaluationData.summary.PE}</h6>
           <h6>PE (3yr moing avg): {companyvaluationData.summary.PEIdeal}</h6>
         </div>
       </div>
@@ -43,7 +63,7 @@ const StockAnalyzerValuation = ({companyvaluationData}) => {
           </div>
         </div>
         <div className="col">
-          <h6>P/B (Current): {companyvaluationData.summary.PB}</h6>
+          <h6 className={colorCode.PBCurrent}>P/B (Current (2yr BV)): {companyvaluationData.summary.PB}</h6>
           <h6>P/B (3yr moing avg): {companyvaluationData.summary.PBIdeal}</h6>
         </div>
       </div>

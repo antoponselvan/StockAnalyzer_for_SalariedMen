@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
+const StockAnalyzerFundamentals = ({companyfundamentalsData, kpiScore}) => {
   
   useEffect(()=>{
     Plotly.newPlot( 'revenueGraph', [{
@@ -23,6 +23,25 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
       margin: { t: 0 } } );
   },[companyfundamentalsData])
 
+  const relevantKpiAttributes = ["revenueCAGR", "incomeCAGR", "debtByEquityCAGR"]
+  let colorCode={}
+  for (let kpi of relevantKpiAttributes){
+    switch (kpiScore[kpi]) {
+      case 0:
+        colorCode[kpi] = "text-danger";
+        break;
+      case 1:
+        colorCode[kpi] = "text-warning"
+        break;
+      case 2:
+        colorCode[kpi] = "text-success"
+        break;
+      default:
+        colorCode[kpi] = "text-dark"
+    }
+
+  }
+
   return (
     <>    
         <div className="col border-start border-bottom border-end align-items-center">
@@ -32,7 +51,7 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
               <p>...</p>
             </div>
             <div className="col">
-              <h4>CAGR (%): {companyfundamentalsData.summary.revenueCAGR}</h4>
+              <h4 className={colorCode.revenueCAGR}>CAGR (%): {companyfundamentalsData.summary.revenueCAGR}</h4>
             </div>
           </div>
 
@@ -42,7 +61,7 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
               <p>...</p>
             </div>
             <div className="col">
-              <h4>CAGR (%): {companyfundamentalsData.summary.incomeCAGR}</h4>
+              <h4 className={colorCode.incomeCAGR}>CAGR (%): {companyfundamentalsData.summary.incomeCAGR}</h4>
             </div>
           </div>
 
@@ -52,7 +71,7 @@ const StockAnalyzerFundamentals = ({companyfundamentalsData}) => {
               <p>...</p>
             </div>
             <div className="col">
-              <h4>CAGR (%): {companyfundamentalsData.summary.debtByEquityCAGR}</h4>
+              <h4 className={colorCode.debtByEquityCAGR}>CAGR (%): {companyfundamentalsData.summary.debtByEquityCAGR}</h4>
             </div>
           </div>
 

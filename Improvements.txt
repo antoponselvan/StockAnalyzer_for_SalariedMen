@@ -2,7 +2,8 @@
 2) Take latest year / quarter for list of companies
 3) ReFactor code using useReducer & useContext & searchParam
 4) With no company search result - display "No company found"
-
+5) change code to introduce intermediate variable and calling same function again & again (Eg: Date.now())
+6) Calculations to be corrected - lot of repeated data for a year eg: Q1, the Q1-Q3, this makes the average calc inaccurate
 
 Imp Para:
 Revenues

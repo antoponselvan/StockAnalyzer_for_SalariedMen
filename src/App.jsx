@@ -37,6 +37,9 @@ function App() {
                       }
     }
   )
+  const [kpiScore, setKpiScore] = useState({
+    revenueCAGR:0, incomeCAGR:1, debtByEquityCAGR:1, PECurrent:1, PBCurrent:1,indexConstituent:1, yearCount:1, stockPrice:1 
+  })
   
   return ( 
     
@@ -49,20 +52,20 @@ function App() {
             <Route path="/StockAnalyzer" element={<StockAnalyzerLayout 
             companyData={companyData} setCompanyData={setCompanyData} 
             selectedStock={selectedStock} setSelectedStock={setSelectedStock} 
-            calculatedCompanyData={calculatedCompanyData} setCalculatedCompanyData={setCalculatedCompanyData}/>}>
+            calculatedCompanyData={calculatedCompanyData} setCalculatedCompanyData={setCalculatedCompanyData} kpiScore={kpiScore} setKpiScore={setKpiScore}/>}>
 
               <Route path="/StockAnalyzer/Summary" element={<StockAnalyzerSummary 
               companySummaryData={{safeguardsSummary: calculatedCompanyData.safeguardsSummary,          fundamentalsSummary:calculatedCompanyData.fundamentalsSummary, 
               valuationSummary:calculatedCompanyData.valuationSummary, 
               scoreSummary:calculatedCompanyData.scoreSummary}} 
-              companySharePrice={companyData.SharePrice} />}/>
+              companySharePrice={companyData.SharePrice} kpiScore={kpiScore}/>}/>
 
               <Route path="/StockAnalyzer/Fundamentals" element={<StockAnalyzerFundamentals 
-              companyfundamentalsData={{summary:calculatedCompanyData.fundamentalsSummary, details:calculatedCompanyData.fundamentalsDetails}}/>}/>
+              companyfundamentalsData={{summary:calculatedCompanyData.fundamentalsSummary, details:calculatedCompanyData.fundamentalsDetails}}  kpiScore={kpiScore}/>}/>
               
               <Route path="/StockAnalyzer/Valuation" element={<StockAnalyzerValuation 
               companyvaluationData={{summary:calculatedCompanyData.valuationSummary, 
-              details:calculatedCompanyData.valuationDetails}}/>}/>
+              details:calculatedCompanyData.valuationDetails}}  kpiScore={kpiScore}/>}/>
             </Route>
             <Route path="/Recommendations" element={<Recommendations/>}/>
           </Route>
