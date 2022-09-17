@@ -73,202 +73,199 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
 
 
 // Calculate Revenue in a format suitable for graph --------------------------------------------------
-    useEffect(()=>{
-        if (selectedStock.cik !== "-1"){
-            setCalculatedCompanyData((calculatedCompanyData)=>{
-                let companyRevenueFiltered = {timeStamp:[], val:[]};
-                for (let index=0; index<companyData.Revenues.end.length; index++){
-                    let normalizedRevenue = companyData.Revenues.val[index]*(90*24*3600*1000)/(Date.parse(companyData.Revenues.end[index])-Date.parse(companyData.Revenues.start[index]))
-                    companyRevenueFiltered.timeStamp.push(companyData.Revenues.end[index])
-                    companyRevenueFiltered.val.push(normalizedRevenue)   
-                }
-                return {...calculatedCompanyData, fundamentalsDetails:{...calculatedCompanyData.fundamentalsDetails, revenue: {time:companyRevenueFiltered.timeStamp, val:companyRevenueFiltered.val}}}
-                })
-            }
-    },[companyData.Revenues])
+    // useEffect(()=>{
+    //     if (selectedStock.cik !== "-1"){
+    //         setCalculatedCompanyData((calculatedCompanyData)=>{
+    //             let companyRevenueFiltered = {timeStamp:[], val:[]};
+    //             for (let index=0; index<companyData.Revenues.end.length; index++){
+    //                 let normalizedRevenue = companyData.Revenues.val[index]*(90*24*3600*1000)/(Date.parse(companyData.Revenues.end[index])-Date.parse(companyData.Revenues.start[index]))
+    //                 companyRevenueFiltered.timeStamp.push(companyData.Revenues.end[index])
+    //                 companyRevenueFiltered.val.push(normalizedRevenue)   
+    //             }
+    //             return {...calculatedCompanyData, fundamentalsDetails:{...calculatedCompanyData.fundamentalsDetails, revenue: {time:companyRevenueFiltered.timeStamp, val:companyRevenueFiltered.val}}}
+    //             })
+    //         }
+    // },[companyData.Revenues])
 
 
 // Calculate Income in a format suitable for graph --------------------------------------------------
-    useEffect(()=>{
-        if (selectedStock.cik !== "-1"){
-            setCalculatedCompanyData((calculatedCompanyData)=>{
-                let companyIncomeAdjusted = {timeStamp:[], val:[]};
-                for (let index=0; index<companyData.NetIncomeLoss.end.length; index++){
-                    let normalizedIncome = companyData.NetIncomeLoss.val[index]*(90*24*3600*1000)/(Date.parse(companyData.NetIncomeLoss.end[index])-Date.parse(companyData.NetIncomeLoss.start[index]))
-                    companyIncomeAdjusted.timeStamp.push(companyData.NetIncomeLoss.end[index])
-                    companyIncomeAdjusted.val.push(normalizedIncome)
-                }
-                return {...calculatedCompanyData, fundamentalsDetails:{...calculatedCompanyData.fundamentalsDetails, income: {time:companyIncomeAdjusted.timeStamp, val:companyIncomeAdjusted.val}}}
-                })
-            }
-    },[companyData.NetIncomeLoss])
+    // useEffect(()=>{
+    //     if (selectedStock.cik !== "-1"){
+    //         setCalculatedCompanyData((calculatedCompanyData)=>{
+    //             let companyIncomeAdjusted = {timeStamp:[], val:[]};
+    //             for (let index=0; index<companyData.NetIncomeLoss.end.length; index++){
+    //                 let normalizedIncome = companyData.NetIncomeLoss.val[index]*(90*24*3600*1000)/(Date.parse(companyData.NetIncomeLoss.end[index])-Date.parse(companyData.NetIncomeLoss.start[index]))
+    //                 companyIncomeAdjusted.timeStamp.push(companyData.NetIncomeLoss.end[index])
+    //                 companyIncomeAdjusted.val.push(normalizedIncome)
+    //             }
+    //             return {...calculatedCompanyData, fundamentalsDetails:{...calculatedCompanyData.fundamentalsDetails, income: {time:companyIncomeAdjusted.timeStamp, val:companyIncomeAdjusted.val}}}
+    //             })
+    //         }
+    // },[companyData.NetIncomeLoss])
 
     
 // Calculate D/A in a format suitable for graph --------------------------------------------------
-    useEffect(()=>{
-        setCalculatedCompanyData((calculatedCompanyData)=>{
-            let companyDebtByEquity = {time:[],val:[]}
-            for (let index=0; index<companyData.Assets.end.length; index++){
-                let tempDebtByEquity = 1.3
-                const debtIndex = companyData.Liabilities.end.findIndex((dateItem)=>{
-                    return (Math.abs(Date.parse(dateItem) - Date.parse(companyData.Assets.end[index])) < (5*24*3600*1000))
-                })
-                if (debtIndex !== -1){
-                    companyDebtByEquity.time.push(companyData.Assets.end[index])
-                    let tempAssetItem = companyData.Assets.val[index]
-                    let tempDebtItem = companyData.Liabilities.val[debtIndex]
-                    tempDebtByEquity = tempDebtItem/tempAssetItem
-                    companyDebtByEquity.val.push(tempDebtByEquity)
-                }                
-            }
-            return {...calculatedCompanyData, fundamentalsDetails:{...calculatedCompanyData.fundamentalsDetails , debtByEquity:companyDebtByEquity}}
-        })
-    },[companyData.Assets, companyData.Liabilities])
+    // useEffect(()=>{
+    //     setCalculatedCompanyData((calculatedCompanyData)=>{
+    //         let companyDebtByEquity = {time:[],val:[]}
+    //         for (let index=0; index<companyData.Assets.end.length; index++){
+    //             let tempDebtByEquity = 1.3
+    //             const debtIndex = companyData.Liabilities.end.findIndex((dateItem)=>{
+    //                 return (Math.abs(Date.parse(dateItem) - Date.parse(companyData.Assets.end[index])) < (5*24*3600*1000))
+    //             })
+    //             if (debtIndex !== -1){
+    //                 companyDebtByEquity.time.push(companyData.Assets.end[index])
+    //                 let tempAssetItem = companyData.Assets.val[index]
+    //                 let tempDebtItem = companyData.Liabilities.val[debtIndex]
+    //                 tempDebtByEquity = tempDebtItem/tempAssetItem
+    //                 companyDebtByEquity.val.push(tempDebtByEquity)
+    //             }                
+    //         }
+    //         return {...calculatedCompanyData, fundamentalsDetails:{...calculatedCompanyData.fundamentalsDetails , debtByEquity:companyDebtByEquity}}
+    //     })
+    // },[companyData.Assets, companyData.Liabilities])
 
 // Calculate P/E in a format suitable for graph --------------------------------------------------
 
-useEffect(()=>{
-    // PE Trend ---
-    let companyPE = {time:[],val:[]}
-    let latestEPSArray = []
-    for (let index=0; index<companyData.EarningsPerShareDiluted.end.length; index++){
-        let tempPE = 23
-        const sharePriceArray = companyData.SharePrice.valRaw.filter((val, index2)=>{
-            let tempTimeDiff = Math.abs((Date.parse(companyData.EarningsPerShareDiluted.end[index]) - Date.parse(companyData.SharePrice.time[index2]))/(24*3600*1000) )
-            return (tempTimeDiff<46)
-        }) 
+// useEffect(()=>{
+//     // PE Trend ---
+//     let companyPE = {time:[],val:[]}
+//     let latestEPSArray = []
+//     for (let index=0; index<companyData.EarningsPerShareDiluted.end.length; index++){
+//         let tempPE = 23
+//         const sharePriceArray = companyData.SharePrice.valRaw.filter((val, index2)=>{
+//             let tempTimeDiff = Math.abs((Date.parse(companyData.EarningsPerShareDiluted.end[index]) - Date.parse(companyData.SharePrice.time[index2]))/(24*3600*1000) )
+//             return (tempTimeDiff<46)
+//         }) 
 
-        if ((sharePriceArray.length > 0.5)){
-            const sharePriceAvg = sharePriceArray.reduce((prev, num) => prev+num)/sharePriceArray.length
-            const annualizationFactor = (365*24*3600*1000)/(Date.parse(companyData.EarningsPerShareDiluted.end[index])-Date.parse(companyData.EarningsPerShareDiluted.start[index]))
-            const annualEPS = companyData.EarningsPerShareDiluted.val[index]*annualizationFactor
-            tempPE = sharePriceAvg/annualEPS
-            companyPE.time.push(companyData.EarningsPerShareDiluted.end[index])
-            companyPE.val.push(tempPE)
+//         if ((sharePriceArray.length > 0.5)){
+//             const sharePriceAvg = sharePriceArray.reduce((prev, num) => prev+num)/sharePriceArray.length
+//             const annualizationFactor = (365*24*3600*1000)/(Date.parse(companyData.EarningsPerShareDiluted.end[index])-Date.parse(companyData.EarningsPerShareDiluted.start[index]))
+//             const annualEPS = companyData.EarningsPerShareDiluted.val[index]*annualizationFactor
+//             tempPE = sharePriceAvg/annualEPS
+//             companyPE.time.push(companyData.EarningsPerShareDiluted.end[index])
+//             companyPE.val.push(tempPE)
 
-            if ((Date.now() - Date.parse(companyData.EarningsPerShareDiluted.end[index]))< (2*365*24*3600*1000)){
-                latestEPSArray.push(annualEPS)
-            }
-        }
-    }
-    const sharePriceTimeStamps = companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))
-    const maxSharePriceTimeStampIndex = sharePriceTimeStamps.reduce((iMax, timeStamp, timeStampIndex, arr)=> timeStamp>arr[iMax] ? timeStampIndex : iMax,0)
-    const latestSharePrice = companyData.SharePrice.valRaw[maxSharePriceTimeStampIndex]
-    if ((latestEPSArray.length > 0.5) || ((Date.now()-sharePriceTimeStamps[maxSharePriceTimeStampIndex])<(94*24*3600*1000))) {
-        const latestEPSArrayAvg = latestEPSArray.reduce((prev,current)=>prev+current,0)/latestEPSArray.length
-        const latestPE = (latestSharePrice/latestEPSArrayAvg).toFixed(2)
-        setCalculatedCompanyData((calculatedCompanyData)=>{
-            return {...calculatedCompanyData, valuationSummary: {...calculatedCompanyData.valuationSummary, PE:latestPE}}
-        })
-    } else {
-        setCalculatedCompanyData((calculatedCompanyData)=>{
-            return {...calculatedCompanyData, valuationSummary: {...calculatedCompanyData.valuationSummary, PE:"Inadeqaute Data"}}
-        })
-    }
+//             if ((Date.now() - Date.parse(companyData.EarningsPerShareDiluted.end[index]))< (2*365*24*3600*1000)){
+//                 latestEPSArray.push(annualEPS)
+//             }
+//         }
+//     }
+//     const sharePriceTimeStamps = companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))
+//     const maxSharePriceTimeStampIndex = sharePriceTimeStamps.reduce((iMax, timeStamp, timeStampIndex, arr)=> timeStamp>arr[iMax] ? timeStampIndex : iMax,0)
+//     const latestSharePrice = companyData.SharePrice.valRaw[maxSharePriceTimeStampIndex]
+//     if ((latestEPSArray.length > 0.5) || ((Date.now()-sharePriceTimeStamps[maxSharePriceTimeStampIndex])<(94*24*3600*1000))) {
+//         const latestEPSArrayAvg = latestEPSArray.reduce((prev,current)=>prev+current,0)/latestEPSArray.length
+//         const latestPE = (latestSharePrice/latestEPSArrayAvg).toFixed(2)
+//         setCalculatedCompanyData((calculatedCompanyData)=>{
+//             return {...calculatedCompanyData, valuationSummary: {...calculatedCompanyData.valuationSummary, PE:latestPE}}
+//         })
+//     } else {
+//         setCalculatedCompanyData((calculatedCompanyData)=>{
+//             return {...calculatedCompanyData, valuationSummary: {...calculatedCompanyData.valuationSummary, PE:"Inadeqaute Data"}}
+//         })
+//     }
     
-    setCalculatedCompanyData((calculatedCompanyData)=>{
-        return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PE:companyPE}}
-    })
+//     setCalculatedCompanyData((calculatedCompanyData)=>{
+//         return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PE:companyPE}}
+//     }) 
 
-    // Ideal PE Calc ---
-
-},[companyData.EarningsPerShareDiluted, companyData.SharePrice])
+// },[companyData.EarningsPerShareDiluted, companyData.SharePrice])
 
 
 // Calculate PE Moving Avg---------------------------------------------
-useEffect(()=>{
-    let companyPEMovingAvg = {time:[],val:[20]}
-    for (let index=0; index<calculatedCompanyData.valuationDetails.PE.time.length; index++){
-        const adjacentPEArray = calculatedCompanyData.valuationDetails.PE.val.filter((val, index2)=>{
-            let tempTimeDiff = (Date.parse(calculatedCompanyData.valuationDetails.PE.time[index]) - Date.parse(calculatedCompanyData.valuationDetails.PE.time[index2]))/(24*3600*1000)
-            return ((tempTimeDiff>0)&(tempTimeDiff<1000))
-        }) 
-        companyPEMovingAvg.time.push(calculatedCompanyData.valuationDetails.PE.time[index])
-        const tempMovingAvg = adjacentPEArray.reduce((prev, element)=> prev+element,0)/adjacentPEArray.length
-        companyPEMovingAvg.val.push(tempMovingAvg)
-    }
-    setCalculatedCompanyData((calculatedCompanyData)=>{
-        return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PEMovingAvg:companyPEMovingAvg}}
-    })
-    setCalculatedCompanyData((calculatedCompanyData)=>{
-        return {...calculatedCompanyData, valuationSummary:{...calculatedCompanyData.valuationSummary, PEIdeal:(companyPEMovingAvg.val[companyPEMovingAvg.val.length-1]).toFixed(2)}}
-    })
-},[calculatedCompanyData.valuationDetails.PE])
+// useEffect(()=>{
+//     let companyPEMovingAvg = {time:[],val:[20]}
+//     for (let index=0; index<calculatedCompanyData.valuationDetails.PE.time.length; index++){
+//         const adjacentPEArray = calculatedCompanyData.valuationDetails.PE.val.filter((val, index2)=>{
+//             let tempTimeDiff = (Date.parse(calculatedCompanyData.valuationDetails.PE.time[index]) - Date.parse(calculatedCompanyData.valuationDetails.PE.time[index2]))/(24*3600*1000)
+//             return ((tempTimeDiff>0)&(tempTimeDiff<1000))
+//         }) 
+//         companyPEMovingAvg.time.push(calculatedCompanyData.valuationDetails.PE.time[index])
+//         const tempMovingAvg = adjacentPEArray.reduce((prev, element)=> prev+element,0)/adjacentPEArray.length
+//         companyPEMovingAvg.val.push(tempMovingAvg)
+//     }
+//     setCalculatedCompanyData((calculatedCompanyData)=>{
+//         return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PEMovingAvg:companyPEMovingAvg}}
+//     })
+//     setCalculatedCompanyData((calculatedCompanyData)=>{
+//         return {...calculatedCompanyData, valuationSummary:{...calculatedCompanyData.valuationSummary, PEIdeal:(companyPEMovingAvg.val[companyPEMovingAvg.val.length-1]).toFixed(2)}}
+//     })
+// },[calculatedCompanyData.valuationDetails.PE])
 
 
 // Calculate P/B in a format suitable for graph --------------------------------------------------
-useEffect(()=>{    
-    let companyPB = {time:[],val:[]}
-    let latestBVArray = []
-    for (let index=0; index<companyData.Assets.end.length; index++){
-        let tempPB = 1.3
-        const sharePriceArray = companyData.SharePrice.valRaw.filter((val, index2)=>{
-            let tempTimeDiff = Math.abs((Date.parse(companyData.Assets.end[index]) - Date.parse(companyData.SharePrice.time[index2]))/(24*3600*1000) )
-            return (tempTimeDiff<50)
-        })
-        const shareCountArray = companyData.CommonStockSharesIssued.val.filter((val, index2)=>{
-            let tempTimeDiff = (Date.parse(companyData.Assets.end[index]) - Date.parse(companyData.CommonStockSharesIssued.end[index2]))/(24*3600*1000)
-            return ((tempTimeDiff<180)&(tempTimeDiff>0))
-        })
-        const liabilitiesArray = companyData.Liabilities.val.filter((val, index2)=>{
-            let tempTimeDiff = Math.abs((Date.parse(companyData.Assets.end[index]) - Date.parse(companyData.Liabilities.end[index2]))/(24*3600*1000) )
-            return (tempTimeDiff<10)
-        })
+// useEffect(()=>{    
+//     let companyPB = {time:[],val:[]}
+//     let latestBVArray = []
+//     for (let index=0; index<companyData.Assets.end.length; index++){
+//         let tempPB = 1.3
+//         const sharePriceArray = companyData.SharePrice.valRaw.filter((val, index2)=>{
+//             let tempTimeDiff = Math.abs((Date.parse(companyData.Assets.end[index]) - Date.parse(companyData.SharePrice.time[index2]))/(24*3600*1000) )
+//             return (tempTimeDiff<50)
+//         })
+//         const shareCountArray = companyData.CommonStockSharesIssued.val.filter((val, index2)=>{
+//             let tempTimeDiff = (Date.parse(companyData.Assets.end[index]) - Date.parse(companyData.CommonStockSharesIssued.end[index2]))/(24*3600*1000)
+//             return ((tempTimeDiff<180)&(tempTimeDiff>0))
+//         })
+//         const liabilitiesArray = companyData.Liabilities.val.filter((val, index2)=>{
+//             let tempTimeDiff = Math.abs((Date.parse(companyData.Assets.end[index]) - Date.parse(companyData.Liabilities.end[index2]))/(24*3600*1000) )
+//             return (tempTimeDiff<10)
+//         })
 
-        if ((sharePriceArray.length > 0.5)&(shareCountArray.length>0.5)&(liabilitiesArray.length>0.5)){
-            const sharePriceAvg = sharePriceArray.reduce((prev, num) => prev+num)/sharePriceArray.length
-            const shareCountAvg = shareCountArray.reduce((prev, num) => prev+num)/shareCountArray.length
-            const liabilitiesAvg = liabilitiesArray.reduce((prev, num) => prev+num)/liabilitiesArray.length
-            const BV = (companyData.Assets.val[index]-liabilitiesAvg)/shareCountAvg
-            tempPB = sharePriceAvg/BV
-            companyPB.time.push(companyData.Assets.end[index])
-            companyPB.val.push(tempPB)
+//         if ((sharePriceArray.length > 0.5)&(shareCountArray.length>0.5)&(liabilitiesArray.length>0.5)){
+//             const sharePriceAvg = sharePriceArray.reduce((prev, num) => prev+num)/sharePriceArray.length
+//             const shareCountAvg = shareCountArray.reduce((prev, num) => prev+num)/shareCountArray.length
+//             const liabilitiesAvg = liabilitiesArray.reduce((prev, num) => prev+num)/liabilitiesArray.length
+//             const BV = (companyData.Assets.val[index]-liabilitiesAvg)/shareCountAvg
+//             tempPB = sharePriceAvg/BV
+//             companyPB.time.push(companyData.Assets.end[index])
+//             companyPB.val.push(tempPB)
 
-            if ((Date.now() - Date.parse(companyData.Assets.end[index]))< (2*365*24*3600*1000)){
-                latestBVArray.push(BV)
-        }
-    }
-
+//             if ((Date.now() - Date.parse(companyData.Assets.end[index]))< (2*365*24*3600*1000)){
+//                 latestBVArray.push(BV)
+//         }
+//     }
     
-    const sharePriceTimeStamps = companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))
-    const maxSharePriceTimeStampIndex = sharePriceTimeStamps.reduce((iMax, timeStamp, timeStampIndex, arr)=> timeStamp>arr[iMax] ? timeStampIndex : iMax,0)
-    const latestSharePrice = companyData.SharePrice.valRaw[maxSharePriceTimeStampIndex]
-    if ((latestBVArray.length > 0.5) || ((Date.now()-sharePriceTimeStamps[maxSharePriceTimeStampIndex])<(94*24*3600*1000))) {
-        const latestBVArrayAvg = latestBVArray.reduce((prev,current)=>prev+current,0)/latestBVArray.length
-        const latestPB = (latestSharePrice/latestBVArrayAvg).toFixed(2)
-        setCalculatedCompanyData((calculatedCompanyData)=>{
-            return {...calculatedCompanyData, valuationSummary: {...calculatedCompanyData.valuationSummary, PB:latestPB}}
-        })
-    } else {
-        setCalculatedCompanyData((calculatedCompanyData)=>{
-            return {...calculatedCompanyData, valuationSummary: {...calculatedCompanyData.valuationSummary, PB:"Inadeqaute Data"}}
-        })
-    }
+//     const sharePriceTimeStamps = companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))
+//     const maxSharePriceTimeStampIndex = sharePriceTimeStamps.reduce((iMax, timeStamp, timeStampIndex, arr)=> timeStamp>arr[iMax] ? timeStampIndex : iMax,0)
+//     const latestSharePrice = companyData.SharePrice.valRaw[maxSharePriceTimeStampIndex]
+//     if ((latestBVArray.length > 0.5) || ((Date.now()-sharePriceTimeStamps[maxSharePriceTimeStampIndex])<(94*24*3600*1000))) {
+//         const latestBVArrayAvg = latestBVArray.reduce((prev,current)=>prev+current,0)/latestBVArray.length
+//         const latestPB = (latestSharePrice/latestBVArrayAvg).toFixed(2)
+//         setCalculatedCompanyData((calculatedCompanyData)=>{
+//             return {...calculatedCompanyData, valuationSummary: {...calculatedCompanyData.valuationSummary, PB:latestPB}}
+//         })
+//     } else {
+//         setCalculatedCompanyData((calculatedCompanyData)=>{
+//             return {...calculatedCompanyData, valuationSummary: {...calculatedCompanyData.valuationSummary, PB:"Inadeqaute Data"}}
+//         })
+//     }
 
-    setCalculatedCompanyData((calculatedCompanyData)=>{
-        return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PB:companyPB}}
-    })}
-},[companyData.Assets, companyData.Liabilities, companyData.CommonStockSharesIssued, companyData.SharePrice])
+//     setCalculatedCompanyData((calculatedCompanyData)=>{
+//         return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PB:companyPB}}
+//     })}
+// },[companyData.Assets, companyData.Liabilities, companyData.CommonStockSharesIssued, companyData.SharePrice])
 
 // Calculate PB Moving Avg---------------------------------------------
-useEffect(()=>{    
-    let companyPBMovingAvg = {time:[],val:[2]}
-    for (let index=0; index<calculatedCompanyData.valuationDetails.PB.time.length; index++){
-        const adjacentPBArray = calculatedCompanyData.valuationDetails.PB.val.filter((val, index2)=>{
-            let tempTimeDiff = (Date.parse(calculatedCompanyData.valuationDetails.PB.time[index]) - Date.parse(calculatedCompanyData.valuationDetails.PB.time[index2]))/(24*3600*1000)
-            return ((tempTimeDiff>0)&(tempTimeDiff<1000))
-        }) 
-        companyPBMovingAvg.time.push(calculatedCompanyData.valuationDetails.PB.time[index])
-        const tempMovingAvg = adjacentPBArray.reduce((prev, element)=> prev+element,0)/adjacentPBArray.length
-        companyPBMovingAvg.val.push(tempMovingAvg)
-    }
-    setCalculatedCompanyData((calculatedCompanyData)=>{
-        return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PBMovingAvg:companyPBMovingAvg}}
-    })
-    setCalculatedCompanyData((calculatedCompanyData)=>{
-        return {...calculatedCompanyData, valuationSummary:{...calculatedCompanyData.valuationSummary, PBIdeal:(companyPBMovingAvg.val[companyPBMovingAvg.val.length-1]).toFixed(2)}}
-    })
-},[calculatedCompanyData.valuationDetails.PB])
+// useEffect(()=>{    
+//     let companyPBMovingAvg = {time:[],val:[2]}
+//     for (let index=0; index<calculatedCompanyData.valuationDetails.PB.time.length; index++){
+//         const adjacentPBArray = calculatedCompanyData.valuationDetails.PB.val.filter((val, index2)=>{
+//             let tempTimeDiff = (Date.parse(calculatedCompanyData.valuationDetails.PB.time[index]) - Date.parse(calculatedCompanyData.valuationDetails.PB.time[index2]))/(24*3600*1000)
+//             return ((tempTimeDiff>0)&(tempTimeDiff<1000))
+//         }) 
+//         companyPBMovingAvg.time.push(calculatedCompanyData.valuationDetails.PB.time[index])
+//         const tempMovingAvg = adjacentPBArray.reduce((prev, element)=> prev+element,0)/adjacentPBArray.length
+//         companyPBMovingAvg.val.push(tempMovingAvg)
+//     }
+//     setCalculatedCompanyData((calculatedCompanyData)=>{
+//         return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PBMovingAvg:companyPBMovingAvg}}
+//     })
+//     setCalculatedCompanyData((calculatedCompanyData)=>{
+//         return {...calculatedCompanyData, valuationSummary:{...calculatedCompanyData.valuationSummary, PBIdeal:(companyPBMovingAvg.val[companyPBMovingAvg.val.length-1]).toFixed(2)}}
+//     })
+// },[calculatedCompanyData.valuationDetails.PB])
 
 // Calculate Year since company public data is available ----------------------------
 useEffect(()=>{

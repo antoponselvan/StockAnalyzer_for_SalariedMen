@@ -1,14 +1,19 @@
 import { useEffect } from "react"
 
-const StockAnalyzerValuation = ({companyvaluationData, kpiScore}) => {
-  let PE = {x: companyvaluationData.details.PE.time, y: companyvaluationData.details.PE.val, name:"PE" };
-  let PEmovingAvg = {x: companyvaluationData.details.PEMovingAvg.time, y: companyvaluationData.details.PEMovingAvg.val, name:"PE (3yr Avg)" }
+const StockAnalyzerValuation = ({companyvaluationData, kpiScore, companyValuation}) => {
+  // let PE = {x: companyvaluationData.details.PE.time, y: companyvaluationData.details.PE.val, name:"PE" };
+  let PE = {x: companyValuation.details.PE.time, y: companyValuation.details.PE.val, name:"PE" };
+  // let PEmovingAvg = {x: companyvaluationData.details.PEMovingAvg.time, y: companyvaluationData.details.PEMovingAvg.val, name:"PE (3yr Avg)" }  
+  let PEmovingAvg = {x: companyValuation.details.PEMovingAvg.time, y: companyValuation.details.PEMovingAvg.val, name:"PE (3yr Avg)" }
   let PEyAxisHighLim = 100
   let PEyMax = Math.max(...PE.y)
   if (PEyMax < 100) {PEyAxisHighLim=PEyMax}
 
-  let PB = {x: companyvaluationData.details.PB.time, y: companyvaluationData.details.PB.val, name:"PB" };
-  let PBmovingAvg = {x: companyvaluationData.details.PBMovingAvg.time, y: companyvaluationData.details.PBMovingAvg.val, name:"PB (3yr Avg)" }
+  // let PB = {x: companyvaluationData.details.PB.time, y: companyvaluationData.details.PB.val, name:"PB" };  
+  let PB = {x: companyValuation.details.PB.time, y: companyValuation.details.PB.val, name:"PB" };
+
+  // let PBmovingAvg = {x: companyvaluationData.details.PBMovingAvg.time, y: companyvaluationData.details.PBMovingAvg.val, name:"PB (3yr Avg)" }
+  let PBmovingAvg = {x: companyValuation.details.PBMovingAvg.time, y: companyValuation.details.PBMovingAvg.val, name:"PB (3yr Avg)" }
 
   useEffect(()=>{
     Plotly.newPlot( 'PeGraph', [PE, PEmovingAvg], {
@@ -20,7 +25,7 @@ const StockAnalyzerValuation = ({companyvaluationData, kpiScore}) => {
 
     Plotly.newPlot( 'PbGraph', [PB, PBmovingAvg], {
       margin: { t: 0 } } );
-  },[companyvaluationData])
+  },[companyvaluationData, companyValuation])
 
   
   const relevantKpiAttributes = ["PECurrent", "PBCurrent"]

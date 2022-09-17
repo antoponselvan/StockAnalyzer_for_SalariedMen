@@ -1,27 +1,34 @@
 import { useEffect } from "react";
 
-const StockAnalyzerFundamentals = ({companyfundamentalsData, kpiScore}) => {
+const StockAnalyzerFundamentals = ({companyfundamentalsData, kpiScore, companyFundamentals}) => {
   
   useEffect(()=>{
     Plotly.newPlot( 'revenueGraph', [{
-    x: companyfundamentalsData.details.revenue.time,
-    y: companyfundamentalsData.details.revenue.val
+    // x: companyfundamentalsData.details.revenue.time,
+    // y: companyfundamentalsData.details.revenue.val
+    x: companyFundamentals.details.revenue.time,
+    y: companyFundamentals.details.revenue.val
     }], {
     margin: { t: 0 } } );
 
     Plotly.newPlot( 'incomeGraph', [{
-      x: companyfundamentalsData.details.income.time,
-      y: companyfundamentalsData.details.income.val
+      // x: companyfundamentalsData.details.income.time,
+      // y: companyfundamentalsData.details.income.val
+    x: companyFundamentals.details.income.time,
+    y: companyFundamentals.details.income.val
+
     }], {
       margin: { t: 0 } } );
 
     Plotly.newPlot( 'DbyEGraph', [{
-      x: companyfundamentalsData.details.debtByEquity.time,
-      y: companyfundamentalsData.details.debtByEquity.val
+      // x: companyfundamentalsData.details.debtByEquity.time,
+      // y: companyfundamentalsData.details.debtByEquity.val
+      x: companyFundamentals.details.debtByAssets.time,
+      y: companyFundamentals.details.debtByAssets.val
     
     }], {
       margin: { t: 0 } } );
-  },[companyfundamentalsData])
+  },[companyfundamentalsData, companyFundamentals])
 
   const relevantKpiAttributes = ["revenueCAGR", "incomeCAGR", "debtByEquityCAGR"]
   let colorCode={}
