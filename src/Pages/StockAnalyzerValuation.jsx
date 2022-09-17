@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 
-const StockAnalyzerValuation = ({companyvaluationData, kpiScore, companyValuation}) => {
+const StockAnalyzerValuation = ({ kpiScore, companyValuation}) => {
   // let PE = {x: companyvaluationData.details.PE.time, y: companyvaluationData.details.PE.val, name:"PE" };
   let PE = {x: companyValuation.details.PE.time, y: companyValuation.details.PE.val, name:"PE" };
   // let PEmovingAvg = {x: companyvaluationData.details.PEMovingAvg.time, y: companyvaluationData.details.PEMovingAvg.val, name:"PE (3yr Avg)" }  
@@ -25,7 +25,7 @@ const StockAnalyzerValuation = ({companyvaluationData, kpiScore, companyValuatio
 
     Plotly.newPlot( 'PbGraph', [PB, PBmovingAvg], {
       margin: { t: 0 } } );
-  },[companyvaluationData, companyValuation])
+  },[companyValuation])
 
   
   const relevantKpiAttributes = ["PECurrent", "PBCurrent"]
@@ -55,8 +55,8 @@ const StockAnalyzerValuation = ({companyvaluationData, kpiScore, companyValuatio
           </div>
         </div>
         <div className="col">
-          <h6 className={colorCode.PECurrent}>PE (Current (2yr EPS)): {companyvaluationData.summary.PE}</h6>
-          <h6>PE (3yr moing avg): {companyvaluationData.summary.PEIdeal}</h6>
+          <h6 className={colorCode.PECurrent}>PE (Current (2yr EPS)): {companyValuation.summary.PE}</h6>
+          <h6>PE (3yr moing avg): {companyValuation.summary.PEIdeal}</h6>
         </div>
       </div>
 
@@ -66,8 +66,8 @@ const StockAnalyzerValuation = ({companyvaluationData, kpiScore, companyValuatio
           </div>
         </div>
         <div className="col">
-          <h6 className={colorCode.PBCurrent}>P/B (Current (2yr BV)): {companyvaluationData.summary.PB}</h6>
-          <h6>P/B (3yr moing avg): {companyvaluationData.summary.PBIdeal}</h6>
+          <h6 className={colorCode.PBCurrent}>P/B (Current (2yr BV)): {companyValuation.summary.PB}</h6>
+          <h6>P/B (3yr moing avg): {companyValuation.summary.PBIdeal}</h6>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import sAndP500List from "../S&P500list";
 const companyParaList = [{ParaName: "Revenues", Units:"USD"}, {ParaName: "NetIncomeLoss", Units:"USD"}, {ParaName: "Assets", Units:"USD"}, {ParaName: "Liabilities", Units:"USD"}, {ParaName: "StockholdersEquity", Units:"USD"}, {ParaName: "EarningsPerShareDiluted", Units:"USD/shares"}, {ParaName: "CommonStockSharesIssued", Units:"shares"}];
 // "LiabilitiesAndStockholdersEquity", "StockholdersEquity", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "EarningsPerShareBasicAndDiluted"
 
-const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, companyData, calculatedCompanyData, setCalculatedCompanyData, kpiScore, setKpiScore}) => {
+const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, companyData}) => {
 
   const [stockSearchText, setStockSearchText] = useState("");
   const [stockSearchResults, setStockSearchResults] = useState([{Name:"", CIK:"0"}])  
@@ -67,7 +67,7 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                 })
             })
         }        
-        (sAndP500List.findIndex((tickerItem) => (tickerItem === selectedStock.ticker)) === -1)? setCalculatedCompanyData({...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, indexConstituent: "No"}}) : setCalculatedCompanyData({...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, indexConstituent: "Yes"}})
+        // (sAndP500List.findIndex((tickerItem) => (tickerItem === selectedStock.ticker)) === -1)? setCalculatedCompanyData({...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, indexConstituent: "No"}}) : setCalculatedCompanyData({...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, indexConstituent: "Yes"}})
         inputRef.current.value = selectedStock.title        
     }, [selectedStock])
 
@@ -268,131 +268,131 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
 // },[calculatedCompanyData.valuationDetails.PB])
 
 // Calculate Year since company public data is available ----------------------------
-useEffect(()=>{
-    const earliestRevenueDate = Math.min(...(companyData.Revenues.end.map((dateItem)=>Date.parse(dateItem))))
-    const earliestIncomeDate = Math.min(...(companyData.NetIncomeLoss.end.map((dateItem)=>Date.parse(dateItem))))
-    const earliestSharePrice = Math.min(...(companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))))
-    const yearsSincePublic = ((Date.now()-(Math.min(earliestRevenueDate, earliestIncomeDate, earliestSharePrice)))/(365*24*3600*1000)).toFixed(1)
-    setCalculatedCompanyData((calculatedCompanyData)=>{ return {...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, publicYearCount: yearsSincePublic}}})
-}, [companyData])
+// useEffect(()=>{
+//     const earliestRevenueDate = Math.min(...(companyData.Revenues.end.map((dateItem)=>Date.parse(dateItem))))
+//     const earliestIncomeDate = Math.min(...(companyData.NetIncomeLoss.end.map((dateItem)=>Date.parse(dateItem))))
+//     const earliestSharePrice = Math.min(...(companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))))
+//     const yearsSincePublic = ((Date.now()-(Math.min(earliestRevenueDate, earliestIncomeDate, earliestSharePrice)))/(365*24*3600*1000)).toFixed(1)
+//     setCalculatedCompanyData((calculatedCompanyData)=>{ return {...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, publicYearCount: yearsSincePublic}}})
+// }, [companyData])
 
 
 // Calculate CAGR ------------------------------------------------------------------
-const calculateCAGR = (timeStamps, data) => {
-    const dataUnixTime = timeStamps.map((dateItem)=>Date.parse(dateItem))
-    const startTime = Math.min(...dataUnixTime)
-    const endTime = Math.max(...dataUnixTime)
-    if ((endTime-startTime)<(4*365*24*3600*1000)){
-        return "Inadequate Data"
-    } else {
-        const dataInitial = data.filter((val, index)=>(Date.parse(timeStamps[index])<(startTime+(2*365*24*3600*1000))))
-        const dataInitialAvg = dataInitial.reduce((prev, current)=>(prev+current),0)/dataInitial.length
-        const dataFinal = data.filter((val, index)=>(Date.parse(timeStamps[index])>(endTime)-(2*365*24*3600*1000)))
-        const dataFinalAvg = dataFinal.reduce((prev, current)=>(prev+current),0)/dataFinal.length
-        const timePeriodYrs = (endTime-startTime)/(365*24*3600*1000) - 2
-        const CAGR = ((((dataFinalAvg/dataInitialAvg)**(1/timePeriodYrs))-1)*100).toFixed(1)
-        return CAGR
-    }
-}
+// const calculateCAGR = (timeStamps, data) => {
+//     const dataUnixTime = timeStamps.map((dateItem)=>Date.parse(dateItem))
+//     const startTime = Math.min(...dataUnixTime)
+//     const endTime = Math.max(...dataUnixTime)
+//     if ((endTime-startTime)<(4*365*24*3600*1000)){
+//         return "Inadequate Data"
+//     } else {
+//         const dataInitial = data.filter((val, index)=>(Date.parse(timeStamps[index])<(startTime+(2*365*24*3600*1000))))
+//         const dataInitialAvg = dataInitial.reduce((prev, current)=>(prev+current),0)/dataInitial.length
+//         const dataFinal = data.filter((val, index)=>(Date.parse(timeStamps[index])>(endTime)-(2*365*24*3600*1000)))
+//         const dataFinalAvg = dataFinal.reduce((prev, current)=>(prev+current),0)/dataFinal.length
+//         const timePeriodYrs = (endTime-startTime)/(365*24*3600*1000) - 2
+//         const CAGR = ((((dataFinalAvg/dataInitialAvg)**(1/timePeriodYrs))-1)*100).toFixed(1)
+//         return CAGR
+//     }
+// }
 
-// Revenue CAGR 
-useEffect(()=>{
-    const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.revenue.time, calculatedCompanyData.fundamentalsDetails.revenue.val)
-    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, revenueCAGR: CAGR}}})
-    }
-,[calculatedCompanyData.fundamentalsDetails.revenue])
+// // Revenue CAGR 
+// useEffect(()=>{
+//     const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.revenue.time, calculatedCompanyData.fundamentalsDetails.revenue.val)
+//     setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, revenueCAGR: CAGR}}})
+//     }
+// ,[calculatedCompanyData.fundamentalsDetails.revenue])
 
-// Income CAGR
-useEffect(()=>{
-    const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.income.time, calculatedCompanyData.fundamentalsDetails.income.val)
-    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, incomeCAGR: CAGR}}})
-    }
-,[calculatedCompanyData.fundamentalsDetails.income])
+// // Income CAGR
+// useEffect(()=>{
+//     const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.income.time, calculatedCompanyData.fundamentalsDetails.income.val)
+//     setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, incomeCAGR: CAGR}}})
+//     }
+// ,[calculatedCompanyData.fundamentalsDetails.income])
 
-// DebtByAssets CAGR
-useEffect(()=>{
-    const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.debtByEquity.time, calculatedCompanyData.fundamentalsDetails.debtByEquity.val)
-    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, debtByEquityCAGR: CAGR}}})
-    }
-,[calculatedCompanyData.fundamentalsDetails.debtByEquity])
+// // DebtByAssets CAGR
+// useEffect(()=>{
+//     const CAGR = calculateCAGR(calculatedCompanyData.fundamentalsDetails.debtByEquity.time, calculatedCompanyData.fundamentalsDetails.debtByEquity.val)
+//     setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, debtByEquityCAGR: CAGR}}})
+//     }
+// ,[calculatedCompanyData.fundamentalsDetails.debtByEquity])
 
-// Share Price CAGR
-useEffect(()=>{
-    const CAGR = calculateCAGR(companyData.SharePrice.time, companyData.SharePrice.val)
-    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, safeguardsSummary: {...calculatedCompanyData.safeguardsSummary, sharePriceCAGR: CAGR}}})
-    }
-,[companyData.SharePrice])
+// // Share Price CAGR
+// useEffect(()=>{
+//     const CAGR = calculateCAGR(companyData.SharePrice.time, companyData.SharePrice.val)
+//     setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, safeguardsSummary: {...calculatedCompanyData.safeguardsSummary, sharePriceCAGR: CAGR}}})
+//     }
+// ,[companyData.SharePrice])
 
 
 // Calculate KPI Score ----------------------------------------------------------------------
-const kpiScoreCutOff = {
-    revenueCAGR: [0,5], incomeCAGR:[0,5], debtByEquityCAGR:[0, 5], PECurrent: [0.95, 1.05], PBCurrent: [0.95, 1.05], yearCount: [5, 10], stockPrice:[5,10]
-}
+// const kpiScoreCutOff = {
+//     revenueCAGR: [0,5], incomeCAGR:[0,5], debtByEquityCAGR:[0, 5], PECurrent: [0.95, 1.05], PBCurrent: [0.95, 1.05], yearCount: [5, 10], stockPrice:[5,10]
+// }
 
-const calculateScore = (kpiType, kpiVal) => {
-    let score = 1
-    if (kpiVal > kpiScoreCutOff[kpiType][1]){
-        score = 2
-    } else if (kpiVal < kpiScoreCutOff[kpiType][0]){
-        score = 0
-    } else {
-        score = 1
-    }
-    return score
-}
+// const calculateScore = (kpiType, kpiVal) => {
+//     let score = 1
+//     if (kpiVal > kpiScoreCutOff[kpiType][1]){
+//         score = 2
+//     } else if (kpiVal < kpiScoreCutOff[kpiType][0]){
+//         score = 0
+//     } else {
+//         score = 1
+//     }
+//     return score
+// }
 
-useEffect(()=>{
-    const score = calculateScore("revenueCAGR", calculatedCompanyData.fundamentalsSummary.revenueCAGR)
-    setKpiScore((kpiScore)=> {return {...kpiScore, revenueCAGR:score}})
-}, [calculatedCompanyData.fundamentalsSummary.revenueCAGR])
+// useEffect(()=>{
+//     const score = calculateScore("revenueCAGR", calculatedCompanyData.fundamentalsSummary.revenueCAGR)
+//     setKpiScore((kpiScore)=> {return {...kpiScore, revenueCAGR:score}})
+// }, [calculatedCompanyData.fundamentalsSummary.revenueCAGR])
 
-useEffect(()=>{
-    const score = calculateScore("incomeCAGR", calculatedCompanyData.fundamentalsSummary.incomeCAGR)
-    setKpiScore((kpiScore)=> {return {...kpiScore, incomeCAGR:score}})
-}, [calculatedCompanyData.fundamentalsSummary.incomeCAGR])
+// useEffect(()=>{
+//     const score = calculateScore("incomeCAGR", calculatedCompanyData.fundamentalsSummary.incomeCAGR)
+//     setKpiScore((kpiScore)=> {return {...kpiScore, incomeCAGR:score}})
+// }, [calculatedCompanyData.fundamentalsSummary.incomeCAGR])
 
-useEffect(()=>{
-    const score = 2 - calculateScore("debtByEquityCAGR", calculatedCompanyData.fundamentalsSummary.debtByEquityCAGR)
-    setKpiScore((kpiScore)=> {return {...kpiScore, debtByEquityCAGR:score}})
-}, [calculatedCompanyData.fundamentalsSummary.debtByEquityCAGR])
-
-
-useEffect(()=>{
-    const score = calculateScore("PECurrent", (calculatedCompanyData.valuationSummary.PEIdeal/calculatedCompanyData.valuationSummary.PE))
-    setKpiScore((kpiScore)=> {return {...kpiScore, PECurrent:score}})
-}, [calculatedCompanyData.valuationSummary.PE, calculatedCompanyData.valuationSummary.PEIdeal])
+// useEffect(()=>{
+//     const score = 2 - calculateScore("debtByEquityCAGR", calculatedCompanyData.fundamentalsSummary.debtByEquityCAGR)
+//     setKpiScore((kpiScore)=> {return {...kpiScore, debtByEquityCAGR:score}})
+// }, [calculatedCompanyData.fundamentalsSummary.debtByEquityCAGR])
 
 
-useEffect(()=>{
-    const score = calculateScore("PBCurrent", (calculatedCompanyData.valuationSummary.PBIdeal/calculatedCompanyData.valuationSummary.PB))
-    setKpiScore((kpiScore)=> {return {...kpiScore, PBCurrent:score}})
-}, [calculatedCompanyData.valuationSummary.PB, calculatedCompanyData.valuationSummary.PBIdeal])
+// useEffect(()=>{
+//     const score = calculateScore("PECurrent", (calculatedCompanyData.valuationSummary.PEIdeal/calculatedCompanyData.valuationSummary.PE))
+//     setKpiScore((kpiScore)=> {return {...kpiScore, PECurrent:score}})
+// }, [calculatedCompanyData.valuationSummary.PE, calculatedCompanyData.valuationSummary.PEIdeal])
 
 
-useEffect(()=>{
-    if (calculatedCompanyData.safeguardsSummary.indexConstituent === "Yes"){
-        setKpiScore((kpiScore)=> {return {...kpiScore, indexConstituent:2}})
-    } else {
-        setKpiScore((kpiScore)=> {return {...kpiScore, indexConstituent:0}})
-    }
-}, [calculatedCompanyData.safeguardsSummary.sharePriceCAGR])
+// useEffect(()=>{
+//     const score = calculateScore("PBCurrent", (calculatedCompanyData.valuationSummary.PBIdeal/calculatedCompanyData.valuationSummary.PB))
+//     setKpiScore((kpiScore)=> {return {...kpiScore, PBCurrent:score}})
+// }, [calculatedCompanyData.valuationSummary.PB, calculatedCompanyData.valuationSummary.PBIdeal])
 
-useEffect(()=>{
-    const score = calculateScore("yearCount", calculatedCompanyData.safeguardsSummary.publicYearCount)
-    setKpiScore((kpiScore)=> {return {...kpiScore, yearCount:score}})
-}, [calculatedCompanyData.safeguardsSummary.publicYearCount])
 
-useEffect(()=>{
-    const score = calculateScore("stockPrice", calculatedCompanyData.safeguardsSummary.sharePriceCAGR)
-    setKpiScore((kpiScore)=> {return {...kpiScore, stockPrice:score}})
-}, [calculatedCompanyData.safeguardsSummary.sharePriceCAGR])
+// useEffect(()=>{
+//     if (calculatedCompanyData.safeguardsSummary.indexConstituent === "Yes"){
+//         setKpiScore((kpiScore)=> {return {...kpiScore, indexConstituent:2}})
+//     } else {
+//         setKpiScore((kpiScore)=> {return {...kpiScore, indexConstituent:0}})
+//     }
+// }, [calculatedCompanyData.safeguardsSummary.sharePriceCAGR])
 
-useEffect(()=>{
-    const fundamentalsScore = (kpiScore.revenueCAGR + kpiScore.incomeCAGR + kpiScore.debtByEquityCAGR)*(10/6)
-    const valuationScore = (kpiScore.PECurrent + kpiScore.PBCurrent)*(10/4)
-    const safeguardsScore = (kpiScore.indexConstituent + kpiScore.yearCount + kpiScore.stockPrice)*(10/6)
-    setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, scoreSummary:{fundamentals:fundamentalsScore, valuation: valuationScore, safeguard:safeguardsScore}}})
-},[kpiScore])
+// useEffect(()=>{
+//     const score = calculateScore("yearCount", calculatedCompanyData.safeguardsSummary.publicYearCount)
+//     setKpiScore((kpiScore)=> {return {...kpiScore, yearCount:score}})
+// }, [calculatedCompanyData.safeguardsSummary.publicYearCount])
+
+// useEffect(()=>{
+//     const score = calculateScore("stockPrice", calculatedCompanyData.safeguardsSummary.sharePriceCAGR)
+//     setKpiScore((kpiScore)=> {return {...kpiScore, stockPrice:score}})
+// }, [calculatedCompanyData.safeguardsSummary.sharePriceCAGR])
+
+// useEffect(()=>{
+//     const fundamentalsScore = (kpiScore.revenueCAGR + kpiScore.incomeCAGR + kpiScore.debtByEquityCAGR)*(10/6)
+//     const valuationScore = (kpiScore.PECurrent + kpiScore.PBCurrent)*(10/4)
+//     const safeguardsScore = (kpiScore.indexConstituent + kpiScore.yearCount + kpiScore.stockPrice)*(10/6)
+//     setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, scoreSummary:{fundamentals:fundamentalsScore, valuation: valuationScore, safeguard:safeguardsScore}}})
+// },[kpiScore])
 
 
 // Event Handlers ---------------------------------------------------------------------------------- 

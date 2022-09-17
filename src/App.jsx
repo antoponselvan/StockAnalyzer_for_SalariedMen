@@ -7,13 +7,14 @@ import Recommendations from './Pages/Recommendations'
 import StockAnalyzerSummary from './Pages/StockAnalyzerSummary'
 import StockAnalyzerFundamentals from './Pages/StockAnalyzerFundamentals'
 import StockAnalyzerValuation from './Pages/StockAnalyzerValuation'
+import sAndP500List from "./S&P500list";
 import { useState } from 'react'
 
 const formatRevenueOrIncome = (data) => {
-  let companyDataFiltered = {timeStamp:[], val:[]};
+  let companyDataFiltered = {time:[], val:[]};
   for (let index=0; index<data.end.length; index++){
       let normalizedData = data.val[index]*(90*24*3600*1000)/(Date.parse(data.end[index])-Date.parse(data.start[index]))
-      companyDataFiltered.timeStamp.push(data.end[index])
+      companyDataFiltered.time.push(data.end[index])
       companyDataFiltered.val.push(normalizedData)   
   }
   return companyDataFiltered
@@ -67,7 +68,8 @@ const calculatePE = (earningsPerShareDiluted, sharePrice) => {
   if ((latestEPSArray.length > 0.5) || ((Date.now()-sharePriceTimeStamps[maxSharePriceTimeStampIndex])<(94*24*3600*1000))) {
       const latestEPSArrayAvg = latestEPSArray.reduce((prev,current)=>prev+current,0)/latestEPSArray.length
       latestPE = (latestSharePrice/latestEPSArrayAvg).toFixed(2)        
-  }     
+  }  
+  console.log([companyPE, latestPE])   
   return [companyPE, latestPE]
 }
 
@@ -143,6 +145,48 @@ const calculatePEMovingAvg = (PE) => {
     return companyPBMovingAvg
   }
 
+  const calculatePublicYearCount = (revenueDates, incomeDates, sharePriceDates) => {
+    const earliestRevenueDate = Math.min(...(revenueDates.map((dateItem)=>Date.parse(dateItem))))
+    const earliestIncomeDate = Math.min(...(incomeDates.map((dateItem)=>Date.parse(dateItem))))
+    const earliestSharePrice = Math.min(...(sharePriceDates.map((dateItem)=>Date.parse(dateItem))))
+    const yearsSincePublic = ((Date.now()-(Math.min(earliestRevenueDate, earliestIncomeDate, earliestSharePrice)))/(365*24*3600*1000)).toFixed(1)
+    return yearsSincePublic
+  }
+
+  // Calculate CAGR ------------------------------------------------------------------
+const calculateCAGR = (data) => {
+  const dataUnixTime = data.time.map((dateItem)=>Date.parse(dateItem))
+  const startTime = Math.min(...dataUnixTime)
+  const endTime = Math.max(...dataUnixTime)
+  if ((endTime-startTime)<(4*365*24*3600*1000)){
+      return "Inadequate Data"
+  } else {
+      const dataInitial = data.val.filter((itemVal, index)=>(Date.parse(data.time[index])<(startTime+(2*365*24*3600*1000))))
+      const dataInitialAvg = dataInitial.reduce((prev, current)=>(prev+current),0)/dataInitial.length
+      const dataFinal = data.val.filter((val, index)=>(Date.parse(data.time[index])>(endTime)-(2*365*24*3600*1000)))
+      const dataFinalAvg = dataFinal.reduce((prev, current)=>(prev+current),0)/dataFinal.length
+      const timePeriodYrs = (endTime-startTime)/(365*24*3600*1000) - 2
+      const CAGR = ((((dataFinalAvg/dataInitialAvg)**(1/timePeriodYrs))-1)*100).toFixed(1)
+      return CAGR
+  }
+}
+// Calculate KPI Score ----------------------------------------------------------------------
+const kpiScoreCutOff = {
+  revenueCAGR: [0,5], incomeCAGR:[0,5], debtByAssetsCAGR:[0, 5], PECurrent: [0.95, 1.05], PBCurrent: [0.95, 1.05], yearCount: [5, 10], stockPrice:[5,10]
+}
+
+const calculateScore = (kpiType, kpiVal) => {
+  let score = 1
+  if (kpiVal > kpiScoreCutOff[kpiType][1]){
+      score = 2
+  } else if (kpiVal < kpiScoreCutOff[kpiType][0]){
+      score = 0
+  } else {
+      score = 1
+  }
+  return score
+}
+
 function App() {
   const [selectedStock, setSelectedStock] = useState({cik:"-1", ticker:"", title:""});
   const [companyData, setCompanyData] = useState({
@@ -157,9 +201,9 @@ function App() {
   
   let formattedCompanyData = {
     safeguardsSummary: {indexConstituent: "Yes", publicYearCount: 10, sharePriceCAGR: 5},
-    fundamentalsSummary: {revenueCAGR: 5, incomeCAGR: 4, debtByEquityCAGR:5},
+    fundamentalsSummary: {revenueCAGR: 5, incomeCAGR: 4, debtByAssetsCAGR:5},
     valuationSummary: {PE:10, PEIdeal:13, PB:2, PBIdeal:2.1},
-    kpiScore:{revenueCAGR:0, incomeCAGR:1, debtByEquityCAGR:1, PECurrent:1, PBCurrent:1,indexConstituent:1, yearCount:1, stockPrice:1},
+    kpiScore:{revenueCAGR:0, incomeCAGR:1, debtByAssetsCAGR:1, PECurrent:1, PBCurrent:1,indexConstituent:1, yearCount:1, stockPrice:1},
     scoreSummary:{fundamentals:8, valuation:8, safeguard:10},
     fundamentalsDetails: {revenue: {time:[1,2,3], val:[1000,2000,3000]},
                           income: {time:[1,2,3], val:[100,200,300]},
@@ -171,15 +215,43 @@ function App() {
                     }
   }
   if (selectedStock.cik !== "-1"){
+    console.group(formattedCompanyData)
     formattedCompanyData.fundamentalsDetails.revenue = formatRevenueOrIncome(companyData.Revenues);
     formattedCompanyData.fundamentalsDetails.income = formatRevenueOrIncome(companyData.NetIncomeLoss);
     formattedCompanyData.fundamentalsDetails.debtByAssets = calculateDebtByAssets(companyData.Assets, companyData.Liabilities);
     [formattedCompanyData.valuationDetails.PE, formattedCompanyData.valuationSummary.PE] = calculatePE(companyData.EarningsPerShareDiluted, companyData.SharePrice);
     formattedCompanyData.valuationDetails.PEMovingAvg = calculatePEMovingAvg(formattedCompanyData.valuationDetails.PE)
-    formattedCompanyData.valuationSummary.PE = formattedCompanyData.valuationDetails.PEMovingAvg[(formattedCompanyData.valuationDetails.PEMovingAvg.length -1)];
+    formattedCompanyData.valuationSummary.PEIdeal = formattedCompanyData.valuationDetails.PEMovingAvg.val[(formattedCompanyData.valuationDetails.PEMovingAvg.val.length -1)].toFixed(2);
     [formattedCompanyData.valuationDetails.PB, formattedCompanyData.valuationSummary.PB] = calculatePB(companyData.Assets, companyData.Liabilities, companyData.CommonStockSharesIssued, companyData.SharePrice);
     formattedCompanyData.valuationDetails.PBMovingAvg = calculatePBMovingAvg(formattedCompanyData.valuationDetails.PB)
-    formattedCompanyData.valuationSummary.PBIdeal = formattedCompanyData.valuationDetails.PBMovingAvg[(formattedCompanyData.valuationDetails.PBMovingAvg.length -1)];
+    formattedCompanyData.valuationSummary.PBIdeal = formattedCompanyData.valuationDetails.PBMovingAvg.val[(formattedCompanyData.valuationDetails.PBMovingAvg.val.length -1)];
+
+    (sAndP500List.findIndex((tickerItem) => (tickerItem === selectedStock.ticker)) === -1)? (formattedCompanyData.safeguardsSummary.indexConstituent = "No") : (formattedCompanyData.safeguardsSummary.indexConstituent = "Yes")
+    formattedCompanyData.safeguardsSummary.publicYearCount = calculatePublicYearCount(companyData.Revenues.end, companyData.NetIncomeLoss.end, companyData.SharePrice.time)
+    formattedCompanyData.fundamentalsSummary.revenueCAGR = calculateCAGR(formattedCompanyData.fundamentalsDetails.revenue)
+    formattedCompanyData.fundamentalsSummary.incomeCAGR = calculateCAGR(formattedCompanyData.fundamentalsDetails.income)
+    formattedCompanyData.fundamentalsSummary.debtByAssetsCAGR = calculateCAGR(formattedCompanyData.fundamentalsDetails.debtByAssets)
+    formattedCompanyData.safeguardsSummary.sharePriceCAGR = calculateCAGR(companyData.SharePrice)
+
+    
+    formattedCompanyData.kpiScore.revenueCAGR = calculateScore("revenueCAGR", formattedCompanyData.fundamentalsSummary.revenueCAGR)
+    formattedCompanyData.kpiScore.incomeCAGR = calculateScore("incomeCAGR", formattedCompanyData.fundamentalsSummary.incomeCAGR)
+    formattedCompanyData.kpiScore.debtByAssetsCAGR = 2 - calculateScore("debtByAssetsCAGR", formattedCompanyData.fundamentalsSummary.debtByAssetsCAGR)
+    formattedCompanyData.kpiScore.PECurrent = calculateScore("PECurrent", (formattedCompanyData.valuationSummary.PEIdeal/formattedCompanyData.valuationSummary.PE))
+    formattedCompanyData.kpiScore.PBCurrent = calculateScore("PBCurrent", (formattedCompanyData.valuationSummary.PBIdeal/formattedCompanyData.valuationSummary.PB))
+    formattedCompanyData.kpiScore.yearCount = calculateScore("yearCount", formattedCompanyData.safeguardsSummary.publicYearCount)
+    formattedCompanyData.kpiScore.stockPrice = calculateScore("stockPrice", formattedCompanyData.safeguardsSummary.sharePriceCAGR)
+    if (formattedCompanyData.safeguardsSummary.indexConstituent === "Yes"){
+      formattedCompanyData.kpiScore.indexConstituent = 2
+    } else {
+      formattedCompanyData.kpiScore.indexConstituent = 0
+    }
+    const fundamentalsScore = (formattedCompanyData.kpiScore.revenueCAGR + formattedCompanyData.kpiScore.incomeCAGR + formattedCompanyData.kpiScore.debtByAssetsCAGR)*(10/6)
+    const valuationScore = (formattedCompanyData.kpiScore.PECurrent + formattedCompanyData.kpiScore.PBCurrent)*(10/4)
+    const safeguardsScore = (formattedCompanyData.kpiScore.indexConstituent + formattedCompanyData.kpiScore.yearCount + formattedCompanyData.kpiScore.stockPrice)*(10/6)
+    formattedCompanyData.scoreSummary = {fundamentals:fundamentalsScore, valuation: valuationScore, safeguard:safeguardsScore}
+
+    console.log(formattedCompanyData)
   }
   
   const [calculatedCompanyData, setCalculatedCompanyData] = useState(
@@ -205,7 +277,12 @@ function App() {
   const companyFundamentals={summary:formattedCompanyData.fundamentalsSummary, details:formattedCompanyData.fundamentalsDetails}
   const companyValuation = {summary:formattedCompanyData.valuationSummary, 
     details:formattedCompanyData.valuationDetails}
-  
+  const companySummary={
+    safeguardsSummary: formattedCompanyData.safeguardsSummary,
+    fundamentalsSummary:formattedCompanyData.fundamentalsSummary, 
+    valuationSummary:formattedCompanyData.valuationSummary, 
+    scoreSummary:formattedCompanyData.scoreSummary}
+
   return ( 
     
     <>
@@ -216,21 +293,16 @@ function App() {
             <Route index element={<HomePage/>}/>
             <Route path="/StockAnalyzer" element={<StockAnalyzerLayout 
             companyData={companyData} setCompanyData={setCompanyData} 
-            selectedStock={selectedStock} setSelectedStock={setSelectedStock} 
-            calculatedCompanyData={calculatedCompanyData} setCalculatedCompanyData={setCalculatedCompanyData} kpiScore={kpiScore} setKpiScore={setKpiScore}/>}>
+            selectedStock={selectedStock} setSelectedStock={setSelectedStock} />}>
 
               <Route path="/StockAnalyzer/Summary" element={<StockAnalyzerSummary 
-              companySummaryData={{safeguardsSummary: calculatedCompanyData.safeguardsSummary,          fundamentalsSummary:calculatedCompanyData.fundamentalsSummary, 
-              valuationSummary:calculatedCompanyData.valuationSummary, 
-              scoreSummary:calculatedCompanyData.scoreSummary}} 
-              companySharePrice={companyData.SharePrice} kpiScore={kpiScore}/>}/>
+              companySharePrice={companyData.SharePrice} kpiScore={formattedCompanyData.kpiScore} companySummary={companySummary}/>}/>
 
               <Route path="/StockAnalyzer/Fundamentals" element={<StockAnalyzerFundamentals 
-              companyfundamentalsData={{summary:calculatedCompanyData.fundamentalsSummary, details:calculatedCompanyData.fundamentalsDetails}}  kpiScore={kpiScore} companyFundamentals={companyFundamentals}/>}/>
+              kpiScore={formattedCompanyData.kpiScore} companyFundamentals={companyFundamentals}/>}/>
               
               <Route path="/StockAnalyzer/Valuation" element={<StockAnalyzerValuation 
-              companyvaluationData={{summary:calculatedCompanyData.valuationSummary, 
-              details:calculatedCompanyData.valuationDetails}}  kpiScore={kpiScore} companyValuation={companyValuation}/>}/>
+              kpiScore={formattedCompanyData.kpiScore} companyValuation={companyValuation}/>}/>
             </Route>
             <Route path="/Recommendations" element={<Recommendations/>}/>
           </Route>
