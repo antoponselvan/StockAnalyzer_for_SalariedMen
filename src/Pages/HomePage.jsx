@@ -1,10 +1,12 @@
 import salaryManPic from "../../img/salaryman.webp"
 import CardToolFeature from "../Components/CardToolFeature"
+import focusPic from "../../img/Focus.png"
+import valuationPic from "../../img/Valuation.webp"
+import safeguardingPic from "../../img/Safeguarding.png"
 
 const HomePage = () => {
   return (
-    <div className="container">
-      {/* <div className="col-sm-3"></div> */}      
+    <div className="container">     
       <div className="row justify-content-center align-items-center mb-5">
         <div className="col-sm col-md-3">
           <img src={salaryManPic} className="mx-auto d-block w-20"></img>
@@ -18,13 +20,13 @@ const HomePage = () => {
       <div className="row justify-content-center">
       <h4 className="text-center m-4">Key Features</h4>
         <div className="col-sm col-md-3">
-          <CardToolFeature id="A" imgSrc="../../img/Focus.png" title="Focus on key Financial fundamentals" mainText="The most critical financial parameters that represent health and growth of company are picked and analyzed"/>   
+          <CardToolFeature id="A" imgSrc={focusPic} title="Focus on key Financial fundamentals" mainText="The most critical financial parameters that represent health and growth of company are picked and analyzed"/>   
         </div>
         <div className="col-sm col-md-3">
-          <CardToolFeature id="B" imgSrc="../../img/Valuation.webp" title="Simple & effective Valuation technique" mainText="Trends to show key ratios - P/E and P/B to compare current stock price. A feature - not available free in other tools"/>   
+          <CardToolFeature id="B" imgSrc={valuationPic} title="Simple & effective Valuation technique" mainText="Trends to show key ratios - P/E and P/B to compare current stock price. A feature - not available free in other tools"/>   
         </div>
         <div className="col-sm col-md-3">
-          <CardToolFeature id="C" imgSrc="../../img/Safeguarding.png" title="Usage of Safeguarding factors" mainText="Stock market is un-tamable. To ensure ensure we dont go too wrong, some qualitative factors that avoid severe loss are presented"/>   
+          <CardToolFeature id="C" imgSrc={safeguardingPic} title="Usage of Safeguarding factors" mainText="Stock market is un-tamable. To ensure ensure we dont go too wrong, some qualitative factors that avoid severe loss are presented"/>   
         </div>
       
       </div>

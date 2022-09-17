@@ -37,25 +37,29 @@ For the first type, user enters keywords matching either name or ticker-code of 
 
 ## 🏢 Program Architecture
 
+![Architecture](/img/ProgramArchitecture.jpg)
 
 ## 🔥Key Challenges
+
 The main challenges involve following:
+
 - Design of program architecture and data flow
 - Right way of designing state variable and using react hooks
 - Learning a new CSS frame-work(bootstrap) and trying to integrate it
 
-
-
 ## 💻 Technologies, API & Libraries used
 
 Technologies:
+
 - React JS
 - BootStrap
 - HTML / CSS
 
 API:
+
 - AlphaVantage
 - SEC
 
 JS Libraries:
+
 - Plotly

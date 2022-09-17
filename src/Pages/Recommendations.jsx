@@ -70,7 +70,6 @@ const Recommendations = () => {
           </tbody>
         </table>
       </div>
-      {/* <div className="col-sm-1"></div> */}
     </div>
     </>
   )

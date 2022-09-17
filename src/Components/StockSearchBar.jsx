@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import sAndP500List from "../S&P500list";
-// import getHistoricalPrices from 'yahoo-stock-api'
-// import {getHistoricalPrices} from 'yahoo-stock-api'
-// import yahooStockAPI from 'yahoo-stock-api'
 
 const companyParaList = [{ParaName: "Revenues", Units:"USD"}, {ParaName: "NetIncomeLoss", Units:"USD"}, {ParaName: "Assets", Units:"USD"}, {ParaName: "Liabilities", Units:"USD"}, {ParaName: "StockholdersEquity", Units:"USD"}, {ParaName: "EarningsPerShareDiluted", Units:"USD/shares"}, {ParaName: "CommonStockSharesIssued", Units:"shares"}];
 // "LiabilitiesAndStockholdersEquity", "StockholdersEquity", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "EarningsPerShareBasicAndDiluted"
@@ -95,7 +92,6 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
     useEffect(()=>{
         if (selectedStock.cik !== "-1"){
             setCalculatedCompanyData((calculatedCompanyData)=>{
-                // return {...calculatedCompanyData, fundamentalsDetails:{...calculatedCompanyData.fundamentalsDetails, income: {time:companyData.NetIncomeLoss.end.map((timeStamp)=>Date.parse(timeStamp)), val:companyData.NetIncomeLoss.val}}}
                 let companyIncomeAdjusted = {timeStamp:[], val:[]};
                 for (let index=0; index<companyData.NetIncomeLoss.end.length; index++){
                     let normalizedIncome = companyData.NetIncomeLoss.val[index]*(90*24*3600*1000)/(Date.parse(companyData.NetIncomeLoss.end[index])-Date.parse(companyData.NetIncomeLoss.start[index]))
@@ -121,7 +117,6 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                     companyDebtByEquity.time.push(companyData.Assets.end[index])
                     let tempAssetItem = companyData.Assets.val[index]
                     let tempDebtItem = companyData.Liabilities.val[debtIndex]
-                    // tempDebtByEquity = tempDebtItem/(Math.min((tempAssetItem-tempDebtItem),1))
                     tempDebtByEquity = tempDebtItem/tempAssetItem
                     companyDebtByEquity.val.push(tempDebtByEquity)
                 }                
@@ -131,34 +126,6 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
     },[companyData.Assets, companyData.Liabilities])
 
 // Calculate P/E in a format suitable for graph --------------------------------------------------
-
-// useEffect(()=>{
-//     setCalculatedCompanyData((calculatedCompanyData)=>{
-//         let companyPE = {time:[],val:[]}
-//         for (let index=0; index<calculatedCompanyData.fundamentalsDetails.income.time.length; index++){
-//             let tempPE = 23
-//             const sharePriceArray = companyData.SharePrice.val.filter((val, index2)=>{
-//                 let tempTimeDiff = Math.abs((Date.parse(calculatedCompanyData.fundamentalsDetails.income.time[index]) - Date.parse(companyData.SharePrice.time[index2]))/(24*3600*1000) )
-//                 return (tempTimeDiff<50)
-//             })
-//             const shareCountArray = companyData.CommonStockSharesIssued.val.filter((val, index2)=>{
-//                 let tempTimeDiff = Math.abs((Date.parse(calculatedCompanyData.fundamentalsDetails.income.time[index]) - Date.parse(companyData.CommonStockSharesIssued.end[index2]))/(24*3600*1000) )
-//                 return (tempTimeDiff<50)
-//             })            
-
-//             if ((sharePriceArray.length > 0.5)&(shareCountArray.length>0.5)){
-//                 const sharePriceAvg = sharePriceArray.reduce((prev, num) => prev+num)/sharePriceArray.length
-//                 const shareCountAvg = shareCountArray.reduce((prev, num) => prev+num)/shareCountArray.length
-//                 const EPS = calculatedCompanyData.fundamentalsDetails.income.val[index]/shareCountAvg
-//                 tempPE = sharePriceAvg/EPS
-//                 companyPE.time.push(calculatedCompanyData.fundamentalsDetails.income.time[index])
-//                 companyPE.val.push(tempPE)
-//             }
-//         }
-//         return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PE:companyPE}}
-//     })
-// },[calculatedCompanyData.fundamentalsDetails.income])
-
 
 useEffect(()=>{
     // PE Trend ---
@@ -173,7 +140,6 @@ useEffect(()=>{
 
         if ((sharePriceArray.length > 0.5)){
             const sharePriceAvg = sharePriceArray.reduce((prev, num) => prev+num)/sharePriceArray.length
-            // const shareCountAvg = shareCountArray.reduce((prev, num) => prev+num)/shareCountArray.length
             const annualizationFactor = (365*24*3600*1000)/(Date.parse(companyData.EarningsPerShareDiluted.end[index])-Date.parse(companyData.EarningsPerShareDiluted.start[index]))
             const annualEPS = companyData.EarningsPerShareDiluted.val[index]*annualizationFactor
             tempPE = sharePriceAvg/annualEPS
@@ -188,9 +154,6 @@ useEffect(()=>{
     const sharePriceTimeStamps = companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))
     const maxSharePriceTimeStampIndex = sharePriceTimeStamps.reduce((iMax, timeStamp, timeStampIndex, arr)=> timeStamp>arr[iMax] ? timeStampIndex : iMax,0)
     const latestSharePrice = companyData.SharePrice.valRaw[maxSharePriceTimeStampIndex]
-    // console.log(sharePriceTimeStamps)
-    // console.log(maxSharePriceTimeStampIndex, latestSharePrice)
-    // console.log(latestEPSArray)
     if ((latestEPSArray.length > 0.5) || ((Date.now()-sharePriceTimeStamps[maxSharePriceTimeStampIndex])<(94*24*3600*1000))) {
         const latestEPSArrayAvg = latestEPSArray.reduce((prev,current)=>prev+current,0)/latestEPSArray.length
         const latestPE = (latestSharePrice/latestEPSArrayAvg).toFixed(2)
@@ -263,11 +226,8 @@ useEffect(()=>{
 
             if ((Date.now() - Date.parse(companyData.Assets.end[index]))< (2*365*24*3600*1000)){
                 latestBVArray.push(BV)
-            }
-            // console.log(Date.parse(companyData.Assets.end[index]))
         }
     }
-    // console.log(latestBVArray)
 
     
     const sharePriceTimeStamps = companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))
@@ -287,7 +247,7 @@ useEffect(()=>{
 
     setCalculatedCompanyData((calculatedCompanyData)=>{
         return {...calculatedCompanyData, valuationDetails:{...calculatedCompanyData.valuationDetails , PB:companyPB}}
-    })
+    })}
 },[companyData.Assets, companyData.Liabilities, companyData.CommonStockSharesIssued, companyData.SharePrice])
 
 // Calculate PB Moving Avg---------------------------------------------
@@ -315,7 +275,6 @@ useEffect(()=>{
     const earliestRevenueDate = Math.min(...(companyData.Revenues.end.map((dateItem)=>Date.parse(dateItem))))
     const earliestIncomeDate = Math.min(...(companyData.NetIncomeLoss.end.map((dateItem)=>Date.parse(dateItem))))
     const earliestSharePrice = Math.min(...(companyData.SharePrice.time.map((dateItem)=>Date.parse(dateItem))))
-    // const earliestAssetsDate = Math.min 
     const yearsSincePublic = ((Date.now()-(Math.min(earliestRevenueDate, earliestIncomeDate, earliestSharePrice)))/(365*24*3600*1000)).toFixed(1)
     setCalculatedCompanyData((calculatedCompanyData)=>{ return {...calculatedCompanyData, safeguardsSummary:{...calculatedCompanyData.safeguardsSummary, publicYearCount: yearsSincePublic}}})
 }, [companyData])
@@ -388,19 +347,16 @@ const calculateScore = (kpiType, kpiVal) => {
 useEffect(()=>{
     const score = calculateScore("revenueCAGR", calculatedCompanyData.fundamentalsSummary.revenueCAGR)
     setKpiScore((kpiScore)=> {return {...kpiScore, revenueCAGR:score}})
-    // setKpiScore({...kpiScore, revenueCAGR:score})
 }, [calculatedCompanyData.fundamentalsSummary.revenueCAGR])
 
 useEffect(()=>{
     const score = calculateScore("incomeCAGR", calculatedCompanyData.fundamentalsSummary.incomeCAGR)
     setKpiScore((kpiScore)=> {return {...kpiScore, incomeCAGR:score}})
-    // setKpiScore({...kpiScore, incomeCAGR:score})
 }, [calculatedCompanyData.fundamentalsSummary.incomeCAGR])
 
 useEffect(()=>{
     const score = 2 - calculateScore("debtByEquityCAGR", calculatedCompanyData.fundamentalsSummary.debtByEquityCAGR)
     setKpiScore((kpiScore)=> {return {...kpiScore, debtByEquityCAGR:score}})
-    // setKpiScore({...kpiScore, debtByEquityCAGR:score})
 }, [calculatedCompanyData.fundamentalsSummary.debtByEquityCAGR])
 
 
@@ -427,13 +383,11 @@ useEffect(()=>{
 useEffect(()=>{
     const score = calculateScore("yearCount", calculatedCompanyData.safeguardsSummary.publicYearCount)
     setKpiScore((kpiScore)=> {return {...kpiScore, yearCount:score}})
-    // setKpiScore({...kpiScore, revenueCAGR:score})
 }, [calculatedCompanyData.safeguardsSummary.publicYearCount])
 
 useEffect(()=>{
     const score = calculateScore("stockPrice", calculatedCompanyData.safeguardsSummary.sharePriceCAGR)
     setKpiScore((kpiScore)=> {return {...kpiScore, stockPrice:score}})
-    // setKpiScore({...kpiScore, revenueCAGR:score})
 }, [calculatedCompanyData.safeguardsSummary.sharePriceCAGR])
 
 useEffect(()=>{
@@ -443,22 +397,6 @@ useEffect(()=>{
     setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, scoreSummary:{fundamentals:fundamentalsScore, valuation: valuationScore, safeguard:safeguardsScore}}})
 },[kpiScore])
 
-// useEffect(()=>{
-//     const revenueDataUnixTime = calculatedCompanyData.fundamentalsDetails.revenue.time.map((dateItem)=>Date.parse(dateItem))
-//     const startTime = Math.min(...revenueDataUnixTime)
-//     const endTime = Math.max(...revenueDataUnixTime)
-//     if ((endTime - startTime) < (4*365*24*3600*1000)){
-//         setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, revenueCAGR:"Inadequate Data"}}})
-//     } else {
-//         const revenueInitial = calculatedCompanyData.fundamentalsDetails.revenue.val.filter((val, index)=>(Date.parse(calculatedCompanyData.fundamentalsDetails.revenue.time[index])<(startTime+(2*365*24*3600*1000))))
-//         const revenueInitialAvg = revenueInitial.reduce((prev,current)=>(prev+current),0)/revenueInitial.length
-//         const revenueFinal = calculatedCompanyData.fundamentalsDetails.revenue.val.filter((val, index)=>(Date.parse(calculatedCompanyData.fundamentalsDetails.revenue.time[index])>(endTime-(2*365*24*3600*1000))))
-//         const revenueFinalAvg = revenueFinal.reduce((prev,current)=>(prev+current),0)/revenueFinal.length
-//         const timePeriod = ((endTime-startTime)/(365*24*3600*1000))-2
-//         // const revenueCAGR = (Math.ceil((((revenueFinalAvg/revenueInitialAvg)**(1/timePeriod))-1)*100))
-//         setCalculatedCompanyData((calculatedCompanyData)=> {return {...calculatedCompanyData, fundamentalsSummary: {...calculatedCompanyData.fundamentalsSummary, revenueCAGR: revenueCAGR}}})
-//     }
-// },[calculatedCompanyData.fundamentalsDetails.revenue])
 
 // Event Handlers ---------------------------------------------------------------------------------- 
 // TxtBox change triggers search of stock (ticker code or company name) matching input
@@ -483,7 +421,6 @@ useEffect(()=>{
         setStockSearchTextBoxFocus(true)
     }
     const handleInputBoxBlur = () => {
-        // settimeout(()=>{setStockSearchTextBoxFocus(false)},100)
         if ((stockSearchResults.length < 0.5) || (stockSearchText === ""))  {
         setStockSearchTextBoxFocus(false)
         }

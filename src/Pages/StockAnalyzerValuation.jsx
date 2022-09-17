@@ -1,8 +1,6 @@
 import { useEffect } from "react"
 
 const StockAnalyzerValuation = ({companyvaluationData, kpiScore}) => {
-  // let PE = {x: [1, 2, 3, 4, 5], y: [1, 2, 4, 8, 16], name:"PE" };
-  // let PEmovingAvg = {x: [1, 2, 3, 4, 5], y: [1, 4, 3, 8, 17], name:"PE (3yr Avg)" }
   let PE = {x: companyvaluationData.details.PE.time, y: companyvaluationData.details.PE.val, name:"PE" };
   let PEmovingAvg = {x: companyvaluationData.details.PEMovingAvg.time, y: companyvaluationData.details.PEMovingAvg.val, name:"PE (3yr Avg)" }
   let PEyAxisHighLim = 100
