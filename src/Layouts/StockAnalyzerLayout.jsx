@@ -1,10 +1,9 @@
-import { useEffect } from "react"
 import { Outlet } from "react-router-dom"
 import StockAnalyzerTabs from "../Components/StockAnalyzerTabs"
 import financialFreedom from "../../img/financialFreedom.webp"
 import StockSearchBar from "../Components/StockSearchBar"
 
-const StockAnalyzerLayout = ({selectedStock, setSelectedStock, setCompanyData, companyData,  setCalculatedCompanyData}) => {
+const StockAnalyzerLayout = ({selectedStock, setSelectedStock, setCompanyData, companyData}) => {
   
   return (
     <>

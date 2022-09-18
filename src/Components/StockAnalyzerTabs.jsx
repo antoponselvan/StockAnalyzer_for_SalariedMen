@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -7,8 +7,7 @@ const StockAnalyzerTabs = () => {
   const [requestedStockAnalyzerPage, setRequestedStockAnalyzerPage] = useState("summary");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    
+  useEffect(() => { 
     switch (requestedStockAnalyzerPage){
         case "summary": {
             navigate("/StockAnalyzer/Summary")
