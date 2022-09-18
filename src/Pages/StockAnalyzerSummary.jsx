@@ -1,30 +1,39 @@
 import { useState } from "react";
 import { useEffect } from "react"
+import Plot from 'react-plotly.js';
 
-const StockAnalyzerSummary = ({companySummaryData, companySharePrice, kpiScore, companySummary}) => {
+const StockAnalyzerSummary = ({companySharePrice, kpiScore, companySummary}) => {
   // const [colorCode, setColorCode] = useState({})
-  useEffect(()=>{
-    Plotly.newPlot('stockPriceGraph', [{
-      x: companySharePrice.time,
-      y: companySharePrice.val}], {
-        margin: {t:0}
-      });
+  let sharePriceData = {x: companySharePrice.time, y: companySharePrice.val};
+  let radarChartData = {
+    type: 'scatterpolar',
+    r: [companySummary.scoreSummary.safeguard, companySummary.scoreSummary.fundamentals, companySummary.scoreSummary.valuation],
+    theta: ['Safeguarding','Fundamentals','Valuation'],
+    fill: 'toself'}
+  let radarChartLayout = {polar: {radialaxis: {visible: false, range: [0, 10]}}, showlegend: false, margin:{t:0}, width:350}
 
-    Plotly.newPlot("summaryRadarChart", [{
-      type: 'scatterpolar',
-      r: [companySummary.scoreSummary.safeguard, companySummary.scoreSummary.fundamentals, companySummary.scoreSummary.valuation],
-      theta: ['Safeguarding','Fundamentals','Valuation'],
-      fill: 'toself'}], 
-      {polar: {
-          radialaxis: {
-            visible: false,
-            range: [0, 10]
-          }
-        },
-        showlegend: false
-      }
-      )
-  },[companySummary])
+  // useEffect(()=>{
+  //   Plotly.newPlot('stockPriceGraph', [{
+  //     x: companySharePrice.time,
+  //     y: companySharePrice.val}], {
+  //       margin: {t:0}
+  //     });
+
+  //   Plotly.newPlot("summaryRadarChart", [{
+  //     type: 'scatterpolar',
+  //     r: [companySummary.scoreSummary.safeguard, companySummary.scoreSummary.fundamentals, companySummary.scoreSummary.valuation],
+  //     theta: ['Safeguarding','Fundamentals','Valuation'],
+  //     fill: 'toself'}], 
+  //     {polar: {
+  //         radialaxis: {
+  //           visible: false,
+  //           range: [0, 10]
+  //         }
+  //       },
+  //       showlegend: false
+  //     }
+  //     )
+  // },[companySummary])
 
   const relevantKpiAttributes = Object.keys(kpiScore)
   let colorCode={}
@@ -47,14 +56,19 @@ const StockAnalyzerSummary = ({companySummaryData, companySharePrice, kpiScore, 
   return (
     <div className="col border-start border-bottom border-end">
       <div className="row align-items-center mt-4">
-        <div className="col-md-6">
+        <div className="col-lg-6">
           <h5>Share Price</h5>
-          <div id="stockPriceGraph" className="" style={{height:300}}>
-          </div>
+          {/* <div id="stockPriceGraph" className="" style={{height:300}}>
+          <Plot data={[sharePriceData]} layout={{height: 300, margin:{t:0}}}/>          
+          </div> */}
+          
+          <Plot data={[sharePriceData]} layout={{height: 300, width:550 , margin:{t:0}}}/>
+          
         </div>
-        <div className="col-md-6">
-          <div id="summaryRadarChart" className="" style={{height:300}}>
-          </div>
+        <div className="col-lg-6">
+          {/* <div id="summaryRadarChart" className="" style={{height:300}}>
+          </div> */}
+          <Plot data={[radarChartData]} layout={radarChartLayout}/>
         </div>
       </div>    
       <div className="row align-items-start my-5">
