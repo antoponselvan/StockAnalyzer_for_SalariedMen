@@ -110,7 +110,7 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                 }
             </ul>
         </div>             
-        <input onChange={handleChange} onFocus={handleInputBoxFocus} onBlur={handleInputBoxBlur} ref={inputRef} className="form-control" placeholder="Search Stock"/>                
+        <input onChange={handleChange} onFocus={handleInputBoxFocus} onBlur={handleInputBoxBlur} ref={inputRef} className="form-control" placeholder="Search (Name or Ticker Code)"/>                
     </div>
     )
     }

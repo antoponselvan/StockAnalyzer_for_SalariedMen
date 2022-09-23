@@ -1,9 +1,12 @@
-.mainNavItem{
-    min-width:160px
-}
 
 .SearchList{
     position: relative;
     bottom: 0px;
     z-index: 1
+}
+
+@media screen and (min-width: 600px) {
+.mainNavItem{
+    min-width:160px
+}
 }

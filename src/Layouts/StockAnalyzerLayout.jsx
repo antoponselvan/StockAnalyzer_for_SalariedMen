@@ -14,9 +14,11 @@ const StockAnalyzerLayout = ({selectedStock, setSelectedStock, setCompanyData, c
             <StockSearchBar selectedStock={selectedStock} setSelectedStock={setSelectedStock} setCompanyData={setCompanyData} companyData={companyData} />
           </div>              
           {(selectedStock.cik === "-1") ? 
-          <div className="row">
-            <h4>Evaluate Your Stock for Financial Freedom</h4>
-            <img src={financialFreedom}/> 
+          <div className="row justify-content-center">
+            <h4>Evaluate Your (US listed) Stock for Financial Freedom</h4>
+            <div className="col-md-7">
+              <img className="img-fluid" src={financialFreedom}/> 
+            </div>
           </div>
               :
           <div className="row">

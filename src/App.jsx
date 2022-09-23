@@ -69,7 +69,7 @@ const calculatePE = (earningsPerShareDiluted, sharePrice) => {
   let latestPE = "Inadequate Data"
   if ((latestEPSArray.length > 0.5) || ((Date.now()-sharePriceTimeStamps[maxSharePriceTimeStampIndex])<(94*24*3600*1000))) {
       const latestEPSArrayAvg = latestEPSArray.reduce((prev,current)=>prev+current,0)/latestEPSArray.length
-      latestPE = (latestSharePrice/latestEPSArrayAvg).toFixed(2)        
+      latestPE = (latestSharePrice/latestEPSArrayAvg).toFixed(1)        
   }  
   console.log([companyPE, latestPE])   
   return [companyPE, latestPE]
@@ -130,7 +130,7 @@ const calculatePB = (assets, liabilities, commonStockSharesIssued, sharePrice) =
   let latestPB = "Inadequate Data"
   if ((latestBVArray.length > 0.5) || ((Date.now()-sharePriceTimeStamps[maxSharePriceTimeStampIndex])<(94*24*3600*1000))) {
       const latestBVArrayAvg = latestBVArray.reduce((prev,current)=>prev+current,0)/latestBVArray.length
-      latestPB = (latestSharePrice/latestBVArrayAvg).toFixed(2)
+      latestPB = (latestSharePrice/latestBVArrayAvg).toFixed(1)
   }
   return [companyPB, latestPB]
 }
@@ -240,10 +240,11 @@ function App() {
     // Trigger functions to calculate/format KPI related to valuation -------
     [formattedCompanyData.valuationDetails.PE, formattedCompanyData.valuationSummary.PE] = calculatePE(companyData.EarningsPerShareDiluted, companyData.SharePrice);
     formattedCompanyData.valuationDetails.PEMovingAvg = calculatePEMovingAvg(formattedCompanyData.valuationDetails.PE)
-    formattedCompanyData.valuationSummary.PEIdeal = formattedCompanyData.valuationDetails.PEMovingAvg.val[(formattedCompanyData.valuationDetails.PEMovingAvg.val.length -1)].toFixed(2);
+    formattedCompanyData.valuationSummary.PEIdeal = formattedCompanyData.valuationDetails.PEMovingAvg.val[(formattedCompanyData.valuationDetails.PEMovingAvg.val.length -1)].toFixed(1);
     [formattedCompanyData.valuationDetails.PB, formattedCompanyData.valuationSummary.PB] = calculatePB(companyData.Assets, companyData.Liabilities, companyData.CommonStockSharesIssued, companyData.SharePrice);
     formattedCompanyData.valuationDetails.PBMovingAvg = calculatePBMovingAvg(formattedCompanyData.valuationDetails.PB)
-    formattedCompanyData.valuationSummary.PBIdeal = formattedCompanyData.valuationDetails.PBMovingAvg.val[(formattedCompanyData.valuationDetails.PBMovingAvg.val.length -1)];
+    if (formattedCompanyData.valuationDetails.PBMovingAvg.val.length>0.5){
+    formattedCompanyData.valuationSummary.PBIdeal = formattedCompanyData.valuationDetails.PBMovingAvg.val[(formattedCompanyData.valuationDetails.PBMovingAvg.val.length -1)].toFixed(1);}
     // Trigger functions to calculate/format KPI related to safeguard factors -------
     (sAndP500List.findIndex((tickerItem) => (tickerItem === selectedStock.ticker)) === -1)? (formattedCompanyData.safeguardsSummary.indexConstituent = "No") : (formattedCompanyData.safeguardsSummary.indexConstituent = "Yes")
     formattedCompanyData.safeguardsSummary.publicYearCount = calculatePublicYearCount(companyData.Revenues.end, companyData.NetIncomeLoss.end, companyData.SharePrice.time)    

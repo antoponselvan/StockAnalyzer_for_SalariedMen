@@ -33,7 +33,7 @@ const StockAnalyzerTabs = () => {
                 <a className={"text-center nav-link "+(requestedStockAnalyzerPage==="summary"? " active" : "")}> Summary</a>
             </li>
             <li className="nav-item" onClick={handleClick("financialFundamentals")}>
-                <a className={"text-center nav-link "+(requestedStockAnalyzerPage==="financialFundamentals"? " active" : "")}>Financial Fundamentals</a>
+                <a className={"text-center nav-link "+(requestedStockAnalyzerPage==="financialFundamentals"? " active" : "")}>Fundamentals</a>
             </li>
             <li className="nav-item" onClick={handleClick("valuation")}>
                 <a className={"text-center nav-link "+(requestedStockAnalyzerPage==="valuation"? " active" : "")}>Valuation</a>
