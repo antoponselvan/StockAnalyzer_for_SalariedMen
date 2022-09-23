@@ -13,7 +13,7 @@ const HomePage = () => {
         </div>
         <div className="col-sm col-md-5">
         <h4 className="text-center mt-5"> Time - The luxorious commodity that SalaryMan lacks to do quality stock selection</h4>
-        <p className=" lead text-start">We intend to be the best tool in salary man's aresnal to pick stocks that can give good long term returns with relative ease. We dont claim to spot stocks yielding 100X returns but (US listed) stocks that are stable and over long term can beat market indices by 2X+ </p>
+        <p className="text-start">We intend to be the best tool in salary man's aresnal to pick stocks that can give good long term returns with relative ease. We dont claim to spot stocks yielding 100X returns but (US listed) stocks that are stable and over long term can beat market indices by 2X+ </p>
         
         </div>
       </div>
