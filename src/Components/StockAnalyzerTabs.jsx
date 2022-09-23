@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -7,8 +7,7 @@ const StockAnalyzerTabs = () => {
   const [requestedStockAnalyzerPage, setRequestedStockAnalyzerPage] = useState("summary");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    
+  useEffect(() => { 
     switch (requestedStockAnalyzerPage){
         case "summary": {
             navigate("/StockAnalyzer/Summary")
@@ -34,7 +33,7 @@ const StockAnalyzerTabs = () => {
                 <a className={"text-center nav-link "+(requestedStockAnalyzerPage==="summary"? " active" : "")}> Summary</a>
             </li>
             <li className="nav-item" onClick={handleClick("financialFundamentals")}>
-                <a className={"text-center nav-link "+(requestedStockAnalyzerPage==="financialFundamentals"? " active" : "")}>Financial Fundamentals</a>
+                <a className={"text-center nav-link "+(requestedStockAnalyzerPage==="financialFundamentals"? " active" : "")}>Fundamentals</a>
             </li>
             <li className="nav-item" onClick={handleClick("valuation")}>
                 <a className={"text-center nav-link "+(requestedStockAnalyzerPage==="valuation"? " active" : "")}>Valuation</a>

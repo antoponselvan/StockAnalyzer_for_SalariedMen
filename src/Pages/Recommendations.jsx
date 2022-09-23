@@ -1,20 +1,7 @@
 import { useEffect, useState } from "react"
 
 const Recommendations = () => {
-  const [companiesList, setCompaniesList] = useState([{
-    "name": "Apple",
-    "ticker": "AAPL",
-    "revenueCAGR": 5,
-    "incomeCAGR": 28,
-    "debtByEquityCAGR": 1,
-    "PECurrent":10,
-    "PEIdeal":9,
-    "PBCurrent":10,
-    "PBIdeal":9,
-    "indexConstituent": "Yes",
-    "publicYearCount": 10,
-    "sharePriceCAGR": 5
- }])
+  const [companiesList, setCompaniesList] = useState([{"name": "Apple","ticker": "AAPL","revenueCAGR": 5,"incomeCAGR": 28,"debtByEquityCAGR": 1,"PECurrent":10,"PEIdeal":9,"PBCurrent":10,"PBIdeal":9,"indexConstituent": "Yes","publicYearCount": 10,"sharePriceCAGR": 5 }])
 
  useEffect(()=>{
   fetch('https://antoponselvantest.s3.amazonaws.com/RecommendedCompanies.json')
