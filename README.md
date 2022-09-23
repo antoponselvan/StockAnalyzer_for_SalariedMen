@@ -29,7 +29,7 @@ For the first type, user enters keywords matching either name or ticker-code of 
   -- Trends of Revenue, Income and Debt/Asset ratio
 - Valuation tab:
   -- P/E trend and its moving avg
-  -- P/B trend and its moving avg
+  -- P/B trend and its moving avg.
 
 ## 🎥 Visuals
 
