@@ -2,18 +2,25 @@ import { useEffect, useState } from "react"
 
 const Recommendations = () => {
   const [companiesList, setCompaniesList] = useState([{"name": "Apple","ticker": "AAPL","revenueCAGR": 5,"incomeCAGR": 28,"debtByEquityCAGR": 1,"PECurrent":10,"PEIdeal":9,"PBCurrent":10,"PBIdeal":9,"indexConstituent": "Yes","publicYearCount": 10,"sharePriceCAGR": 5 }])
+  const [analysisDate, setAnalysisDate] = useState("Sep 2022")
 
  useEffect(()=>{
   fetch('https://antoponselvantest.s3.amazonaws.com/RecommendedCompanies.json')
   .then((res)=>res.json())
-  .then((data)=>{setCompaniesList(data.companies)})
+  .then((data)=>{
+    setCompaniesList(data.companies)
+    setAnalysisDate(data.date)
+    console.log(data)
+  })
 
  },[])
 
   const companiesKPI = Object.keys(companiesList[0])
   return (
     <>
-    <h3 className="text-center m-5">Recommendations</h3>
+    <h3 className="text-center mt-3">Recommendations</h3>
+    <p className="text-center">Below are the higest scoring top 5 companies (amongst top 30 S&P500 companies by market cap) </p>
+    <p className="text-center">Date of Analysis: {analysisDate}</p>
     <div  className="container-fluid row">
       <div className="col-sm-1"></div>
       <div className="col-sm-10">
@@ -58,6 +65,11 @@ const Recommendations = () => {
         </table>
       </div>
     </div>
+    {/* <div className="text-center">
+    <div className="spinner-grow text-secondary" role="status"></div>
+    <div className="spinner-grow text-secondary" role="status"></div>
+    <div className="spinner-grow text-secondary" role="status"></div>
+    </div> */}
     </>
   )
 }

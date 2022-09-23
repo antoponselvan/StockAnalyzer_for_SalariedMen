@@ -45,7 +45,11 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                         tempdata.fy.push(element.fy)
                         tempdata.fp.push(element.fp)
                     });
-                    setCompanyData((companyData)=> {return {...companyData, [para.ParaName]:tempdata}})                    
+                    setCompanyData((companyData)=> {return {...companyData, [para.ParaName]:tempdata, LoadedAPICount:(companyData.LoadedAPICount+1)}})                    
+                })
+                .catch((error)=>{
+                    let tempdata = {fy:[0], fp:['1Q'], start:[0], end:[0], val:[0]}
+                    setCompanyData((companyData)=> {return {...companyData, [para.ParaName]:tempdata, LoadedAPICount:(companyData.LoadedAPICount+1)}})
                 })
             }
             fetch('https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY_ADJUSTED&symbol='+(selectedStock.ticker)+'&apikey=TFCI3JPMM2ST2IA2')
@@ -61,7 +65,7 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                     return (Number(tempData[timestamp]["4. close"]))
                 })
                 setCompanyData((companyData)=>{
-                    return {...companyData, SharePrice:{time: tempTimeStamps, val: tempStockVal, valRaw: tempStockValRaw} }
+                    return {...companyData, SharePrice:{time: tempTimeStamps, val: tempStockVal, valRaw: tempStockValRaw}, LoadedAPICount:(companyData.LoadedAPICount+1)}
                 })
             })
         }
@@ -84,7 +88,8 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
         const cikStr = cikAddendum[Math.floor(Math.log10(cik))] + String(cik)
         return () => {
             setStockSearchTextBoxFocus(false)
-            setSelectedStock({cik:cikStr, ticker, title})}
+            setSelectedStock({cik:cikStr, ticker, title})
+            setCompanyData({...companyData, LoadedAPICount:0})}
     }
 
     const handleInputBoxFocus = () => {

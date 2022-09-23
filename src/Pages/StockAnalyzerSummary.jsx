@@ -7,7 +7,7 @@ const StockAnalyzerSummary = ({companySharePrice, kpiScore, companySummary}) => 
   let radarChartData = {
     type: 'scatterpolar',
     r: [companySummary.scoreSummary.safeguard, companySummary.scoreSummary.fundamentals, companySummary.scoreSummary.valuation],
-    theta: ['Safeguard','Fundamentals','Valuation'],
+    theta: ['Safeguards','Fundamentals','Valuation'],
     fill: 'toself'}
   let radarChartLayout = {polar: {radialaxis: {visible: false, range: [0, 10]}}, showlegend: false, margin:{t:0}, width:summaryGraphDim}
 
@@ -43,6 +43,7 @@ const StockAnalyzerSummary = ({companySharePrice, kpiScore, companySummary}) => 
 
   useEffect(()=>{handleResize()},[])
 
+  if (companySummary.allDataLoaded) {
   return (
     <div className="col border-start border-bottom border-end">
       <div className="row align-items-center mt-4">
@@ -92,8 +93,17 @@ const StockAnalyzerSummary = ({companySharePrice, kpiScore, companySummary}) => 
           </div>
         </div>
       </div>
-    </div>
-  )
+    </div>)
+  } else {
+    return(
+      <div className="text-center m-5">
+        <div className="spinner-grow text-secondary" role="status"></div>
+        <div className="spinner-grow text-secondary" role="status"></div>
+        <div className="spinner-grow text-secondary" role="status"></div>
+      </div> 
+    )
+  }
+  
 }
 
 export default StockAnalyzerSummary

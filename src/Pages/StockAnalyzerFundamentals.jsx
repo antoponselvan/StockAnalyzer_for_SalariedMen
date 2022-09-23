@@ -38,32 +38,44 @@ const StockAnalyzerFundamentals = ({kpiScore, companyFundamentals}) => {
   window.addEventListener('resize', handleResize)
 
   useEffect(()=>{handleResize()},[])
-  return (
-    <>    
-        <div className="col border-start border-bottom border-end align-items-center">
-        <div className="row align-items-center m-2 my-5">
-              <h5>Income</h5>
-              <Plot data={[incomeData]} layout={{width: fundamentalsGraphDim, height: 400, margin: {t:0, l:40,r:40}}}/>
-              <h6 className={colorCode.incomeCAGR}>CAGR (%): {companyFundamentals.summary.incomeCAGR}</h6>
-              <p>{"> 5% : Green  ;  < 0% : Red  ; Rest : Yellow"}</p>
-          </div>
-          <div className="mt-5">.</div>
+
+  if (companyFundamentals.allDataLoaded) {
+    return (
+      <>    
+          <div className="col border-start border-bottom border-end align-items-center">
           <div className="row align-items-center m-2 my-5">
-              <h5>Revenue</h5>
-              <Plot data={[revenueData]} layout={{width: fundamentalsGraphDim, height: 400, margin: {t:0, l:40,r:40}}}/>
-              <h6 className={colorCode.revenueCAGR}>CAGR (%): {companyFundamentals.summary.revenueCAGR}</h6>
-              <p>{"> 5% : Green  ;  < 0% : Red  ; Rest : Yellow"}</p>
-          </div>
-          <div className="m-5">.</div>          
-          <div className="row align-items-center m-2 my-5">
-              <h5>Debt / Assets</h5>
-              <Plot data={[debtByAssetsData]}  layout={{width: fundamentalsGraphDim, height: 400, margin: {t:40, l:40,r:40}}}/>
-              <h6 className={colorCode.debtByAssetsCAGR}>CAGR (%): {companyFundamentals.summary.debtByAssetsCAGR}</h6>
-              <p>{"< 0% : Green  ;  > 5% : Red  ; Rest : Yellow"}</p>
+                <h5>Income</h5>
+                <Plot data={[incomeData]} layout={{width: fundamentalsGraphDim, height: 400, margin: {t:0, l:40,r:40}}}/>
+                <h6 className={colorCode.incomeCAGR}>CAGR (%): {companyFundamentals.summary.incomeCAGR}</h6>
+                <p>{"> 5% : Green  ;  < 0% : Red  ; Rest : Yellow"}</p>
             </div>
-        </div>   
-    </>
-  )
+            <div className="mt-5">.</div>
+            <div className="row align-items-center m-2 my-5">
+                <h5>Revenue</h5>
+                <Plot data={[revenueData]} layout={{width: fundamentalsGraphDim, height: 400, margin: {t:0, l:40,r:40}}}/>
+                <h6 className={colorCode.revenueCAGR}>CAGR (%): {companyFundamentals.summary.revenueCAGR}</h6>
+                <p>{"> 5% : Green  ;  < 0% : Red  ; Rest : Yellow"}</p>
+            </div>
+            <div className="m-5">.</div>          
+            <div className="row align-items-center m-2 my-5">
+                <h5>Debt / Assets</h5>
+                <Plot data={[debtByAssetsData]}  layout={{width: fundamentalsGraphDim, height: 400, margin: {t:40, l:40,r:40}}}/>
+                <h6 className={colorCode.debtByAssetsCAGR}>CAGR (%): {companyFundamentals.summary.debtByAssetsCAGR}</h6>
+                <p>{"< 0% : Green  ;  > 5% : Red  ; Rest : Yellow"}</p>
+              </div>
+          </div>   
+      </>
+    )
+  } else {
+    return(
+      <div className="text-center m-5">
+        <div className="spinner-grow text-secondary" role="status"></div>
+        <div className="spinner-grow text-secondary" role="status"></div>
+        <div className="spinner-grow text-secondary" role="status"></div>
+      </div> 
+    )
+  }
+
 }
 
 export default StockAnalyzerFundamentals

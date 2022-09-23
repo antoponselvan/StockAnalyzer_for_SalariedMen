@@ -212,7 +212,8 @@ function App() {
     StockholdersEquity:{fy:[2011], fp:["Q4"], start:[0],  end:[0], val:[0]}, 
     SharePrice:{time:[1,2,3], val:[12,13,14], valRaw:[13,16,17]}, 
     EarningsPerShareDiluted:{fy:[2011], fp:["Q4"], start:[0],  end:[0], val:[0]}, 
-    CommonStockSharesIssued:{fy:[2011], fp:["Q4"], start:[0],  end:[0], val:[0]}})
+    CommonStockSharesIssued:{fy:[2011], fp:["Q4"], start:[0],  end:[0], val:[0]},
+    LoadedAPICount:0})
   
   let formattedCompanyData = {
     safeguardsSummary: {indexConstituent: "Yes", publicYearCount: 10, sharePriceCAGR: 5},
@@ -227,7 +228,8 @@ function App() {
                       PEMovingAvg: {time:[1,2,3], val:[11,13,16]},
                       PB: {time:[1,2,3], val:[2.1,2.2,2.3]},
                       PBMovingAvg: {time:[1,2,3], val:[2,2.25,2.5]}
-                    }
+                    },
+    allDataLoaded: false
   }
   if (selectedStock.cik !== "-1"){
     // Trigger functions to calculate/format KPI related to financial fundamentals ------- 
@@ -262,24 +264,26 @@ function App() {
     } else {
       formattedCompanyData.kpiScore.indexConstituent = 0
     }
+    (companyData.LoadedAPICount > 7) ? (formattedCompanyData.allDataLoaded = true) : (formattedCompanyData.allDataLoaded = false)
+    
     // Calculate overall score in 3 key categories
     const fundamentalsScore = (formattedCompanyData.kpiScore.revenueCAGR + formattedCompanyData.kpiScore.incomeCAGR + formattedCompanyData.kpiScore.debtByAssetsCAGR)*(10/6)
     const valuationScore = (formattedCompanyData.kpiScore.PECurrent + formattedCompanyData.kpiScore.PBCurrent)*(10/4)
     const safeguardsScore = (formattedCompanyData.kpiScore.indexConstituent + formattedCompanyData.kpiScore.yearCount + formattedCompanyData.kpiScore.stockPrice)*(10/6)
     formattedCompanyData.scoreSummary = {fundamentals:fundamentalsScore, valuation: valuationScore, safeguard:safeguardsScore}
 
-    console.log(formattedCompanyData)
   }
   
   // Create Object variables in a format that contains just relevant information to be passed to each page
-  const companyFundamentals={summary:formattedCompanyData.fundamentalsSummary, details:formattedCompanyData.fundamentalsDetails}
+  const companyFundamentals={summary:formattedCompanyData.fundamentalsSummary, details:formattedCompanyData.fundamentalsDetails, allDataLoaded: formattedCompanyData.allDataLoaded}
   const companyValuation = {summary:formattedCompanyData.valuationSummary, 
-    details:formattedCompanyData.valuationDetails}
+    details:formattedCompanyData.valuationDetails, allDataLoaded: formattedCompanyData.allDataLoaded}
   const companySummary={
     safeguardsSummary: formattedCompanyData.safeguardsSummary,
     fundamentalsSummary:formattedCompanyData.fundamentalsSummary, 
     valuationSummary:formattedCompanyData.valuationSummary, 
-    scoreSummary:formattedCompanyData.scoreSummary}
+    scoreSummary:formattedCompanyData.scoreSummary,
+    allDataLoaded: formattedCompanyData.allDataLoaded}
 
   return ( 
     <>
