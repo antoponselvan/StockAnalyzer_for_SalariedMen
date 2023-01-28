@@ -124,8 +124,8 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
     {
         isLoadingCompanies &&
         <div className="text-center">
-            Checking for new Comapany Names
-            <div className="row justify-content-center align-items-center">
+            Checking for new Company Names
+            <div className="row justify-content-center align-items-center mb-2">
                 <div class="spinner-grow" role="status"></div>
                 <div class="spinner-grow" role="status"></div>
                 <div class="spinner-grow" role="status"></div>
