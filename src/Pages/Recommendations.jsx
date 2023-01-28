@@ -2,15 +2,22 @@ import { useEffect, useState } from "react"
 
 const Recommendations = () => {
   const [companiesList, setCompaniesList] = useState([{"name": "Apple","ticker": "AAPL","revenueCAGR": 5,"incomeCAGR": 28,"debtByEquityCAGR": 1,"PECurrent":10,"PEIdeal":9,"PBCurrent":10,"PBIdeal":9,"indexConstituent": "Yes","publicYearCount": 10,"sharePriceCAGR": 5 }])
-  const [analysisDate, setAnalysisDate] = useState("Sep 2022")
+  const [analysisDate, setAnalysisDate] = useState("Jan 2023")
+  const [isloading, setIsLoading] = useState(false)
 
  useEffect(()=>{
-  fetch('https://antoponselvantest.s3.amazonaws.com/RecommendedCompanies.json')
+  setIsLoading(true)
+  fetch('https://salariedmanstockanalyzer.s3.amazonaws.com/RecommendedCompanies_top3.json')
   .then((res)=>res.json())
   .then((data)=>{
+    setIsLoading(false)
     setCompaniesList(data.companies)
     setAnalysisDate(data.date)
     console.log(data)
+  })
+  .catch((error)=>{
+    console.log(error)
+    setIsLoading(false)
   })
 
  },[])
@@ -19,11 +26,19 @@ const Recommendations = () => {
   return (
     <>
     <h3 className="text-center mt-3">Recommendations</h3>
-    <p className="text-center">Below are the higest scoring top 5 companies (amongst top 30 S&P500 companies by market cap) </p>
+    <p className="text-center">Below are the higest scoring top 3 companies (amongst top 10 S&P500 companies by market cap) </p>
     <p className="text-center">Date of Analysis: {analysisDate}</p>
-    <div  className="container-fluid row">
+    {
+    isloading? 
+      <div className="row justify-content-center">
+        <div class="spinner-grow" role="status"></div>
+        <div class="spinner-grow" role="status"></div>
+        <div class="spinner-grow" role="status"></div>
+      </div>
+    :
+    <div className="container-fluid row">
       <div className="col-sm-1"></div>
-      <div className="col-sm-10">
+      <div className="col-sm-10 table-responsive">
         <table className="table table-hover text-center m-2 table-secondary">
           <thead>
             <tr>
@@ -65,6 +80,7 @@ const Recommendations = () => {
         </table>
       </div>
     </div>
+    }
     {/* <div className="text-center">
     <div className="spinner-grow text-secondary" role="status"></div>
     <div className="spinner-grow text-secondary" role="status"></div>

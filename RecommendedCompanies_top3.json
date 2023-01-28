@@ -1,0 +1,48 @@
+{
+  "date" : "29 Jan 2023",
+  "companies" : [
+    {
+       "name": "Apple",
+       "ticker": "AAPL",
+       "revenueCAGR": "-",
+       "incomeCAGR": 22.6,
+       "debtByEquityCAGR": "-",
+       "PECurrent":24,
+       "PEIdeal":42,
+       "PBCurrent":38,
+       "PBIdeal":27,
+       "indexConstituent": "Yes",
+       "publicYearCount": "10+",
+       "sharePriceCAGR": 31
+    },    
+    {
+      "name": "Meta Platforms",
+      "ticker": "META",
+      "revenueCAGR": 48,
+      "incomeCAGR": 60,
+      "debtByEquityCAGR": 1.4,
+      "PECurrent":12,
+      "PEIdeal":26,
+      "PBCurrent":"-",
+      "PBIdeal":"-",
+      "indexConstituent": "Yes",
+      "publicYearCount": "10+",
+      "sharePriceCAGR": 24
+   },
+    
+   {
+      "name": "Tesla",
+      "ticker": "TSLA",
+      "revenueCAGR": 71,
+      "incomeCAGR": "-",
+      "debtByEquityCAGR": -2.5,
+      "PECurrent":40,
+      "PEIdeal":104,
+      "PBCurrent":5.8,
+      "PBIdeal":27,
+      "indexConstituent": "Yes",
+      "publicYearCount": "10+",
+      "sharePriceCAGR": 60
+   }
+  ]
+}

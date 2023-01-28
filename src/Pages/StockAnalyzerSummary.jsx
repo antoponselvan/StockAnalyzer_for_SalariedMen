@@ -2,7 +2,7 @@ import Plot from 'react-plotly.js';
 import { useState, useEffect } from 'react';
 
 const StockAnalyzerSummary = ({companySharePrice, kpiScore, companySummary}) => {
-  const [summaryGraphDim, setSummaryGraphDim] = useState((window.innerWidth))
+  const [summaryGraphDim, setSummaryGraphDim] = useState((window.innerWidth*0.95))
   let sharePriceData = {x: companySharePrice.time, y: companySharePrice.val};
   let radarChartData = {
     type: 'scatterpolar',

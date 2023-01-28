@@ -8,19 +8,26 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
     const [stockSearchResults, setStockSearchResults] = useState([{Name:"", CIK:"0"}])  
     const [companyList, setcompanyList] = useState([{title:"", ticker:"" ,CIK:"0000320193"}]) 
     const [stockSearchTextBoxFocus, setStockSearchTextBoxFocus] = useState(false);
+    const [isLoadingCompanies, setIsLoadingCompanies] = useState(false)
     const inputRef = useRef();
 
 
 // Load list of stocks -----------------------------------------------------  
-    useEffect(()=>{       
+    useEffect(()=>{
+        setIsLoadingCompanies(true)       
         fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.sec.gov/files/company_tickers.json')}`)
         .then(response => {
+            setIsLoadingCompanies(false)
             if (response.ok) return response.json()
             throw new Error('Network response was not ok.')
         })
         .then(data => {
             setcompanyList(Object.values(JSON.parse(data.contents)))
             //cik_str, ticker, title
+        })
+        .catch((error)=>{
+            setIsLoadingCompanies(false)
+            console.log(error)
         })
 
     },[])
@@ -75,13 +82,19 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
 // Event Handlers ---------------------------------------------------------------------------------- 
 // TxtBox change triggers search of stock (ticker code or company name) matching input
     const handleChange = (event) => {
-    setStockSearchText(event.target.value);    
+    // setStockSearchText(event.target.value);
+    const stockSearchTxt = event.target.value
+    // console.log(stockSearchTxt)
+    setStockSearchResults(companyList.filter((company)=>{
+        return ((company.title.toLowerCase().search(stockSearchTxt.toLowerCase()) !== -1) || (company.ticker.toLowerCase().search(stockSearchTxt.toLowerCase()) !== -1))
+    }))
     }
-    useEffect(()=>{
-        setStockSearchResults(companyList.filter((company)=>{
-            return ((company.title.toLowerCase().search(stockSearchText.toLowerCase()) !== -1) || (company.ticker.toLowerCase().search(stockSearchText.toLowerCase()) !== -1))
-        }))
-    },[stockSearchText])
+    // useEffect(()=>{
+    //     setStockSearchResults(companyList.filter((company)=>{
+    //         return ((company.title.toLowerCase().search(stockSearchText.toLowerCase()) !== -1) || (company.ticker.toLowerCase().search(stockSearchText.toLowerCase()) !== -1))
+    //     }))
+    // },[stockSearchText])
+
 // Click triggers fetch and all calc of company data
     const handleListClick=({cik, ticker, title})=>{
         const cikAddendum = ["000000000","00000000","0000000","000000","00000","0000","000","00","0"]
@@ -96,14 +109,16 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
         setStockSearchTextBoxFocus(true)
     }
     const handleInputBoxBlur = () => {
-        if ((stockSearchResults.length < 0.5) || (stockSearchText === ""))  {
-        setStockSearchTextBoxFocus(false)
-        }
+        setTimeout(()=>{setStockSearchTextBoxFocus(false)},200)
+        // if ( (stockSearchText === ""))  {
+        // setStockSearchTextBoxFocus(false)
+        // }
     }
 
 
 // Final Component return to HTML -----------------------------------------------------------------
     return (
+    <>
     <div className="mb-3 d-flex">  
         <div className="dropdown">
             <button className="dropdown-toggle btn" data-bs-toggle="dropdown">
@@ -114,9 +129,22 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                     stockSearchResults.map((company, index)=> ((index < 20) && (<li key={index} onClick={handleListClick({cik: company.cik_str, ticker:company.ticker, title:company.title})}><button className="dropdown-item" type="button">{company.ticker} : {company.title}</button></li>)))
                 }
             </ul>
-        </div>             
-        <input onChange={handleChange} onFocus={handleInputBoxFocus} onBlur={handleInputBoxBlur} ref={inputRef} className="form-control" placeholder="Search (Name or Ticker Code)"/>                
+        </div>  
+        <input onChange={handleChange} onFocus={handleInputBoxFocus} onBlur={handleInputBoxBlur} ref={inputRef} className="form-control" placeholder="Search (Name or Ticker Code)"/>         
     </div>
+    {
+        isLoadingCompanies &&
+        <div className="text-center">
+            Loading Comapany Names
+            <div className="row justify-content-center align-items-center">
+                <div class="spinner-grow" role="status"></div>
+                <div class="spinner-grow" role="status"></div>
+                <div class="spinner-grow" role="status"></div>
+            </div>
+            
+        </div>
+    }
+    </>
     )
     }
 

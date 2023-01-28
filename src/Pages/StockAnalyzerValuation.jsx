@@ -4,7 +4,7 @@ import { useState } from "react";
 // import PlotlyComponent from "../C?omponents/TestComponents/PlotlyComponent";
 
 const StockAnalyzerValuation = ({ kpiScore, companyValuation}) => {
-  const [valuationGraphDim, setValuationGraphDim] = useState((window.innerWidth))
+  const [valuationGraphDim, setValuationGraphDim] = useState((window.innerWidth*0.9))
   let PE = {x: companyValuation.details.PE.time, y: companyValuation.details.PE.val, name:"PE" };
   let PEmovingAvg = {x: companyValuation.details.PEMovingAvg.time, y: companyValuation.details.PEMovingAvg.val, name:"PE(3y)" }
   let PEyAxisHighLim = 100

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 
 const StockAnalyzerFundamentals = ({kpiScore, companyFundamentals}) => {
-  const [fundamentalsGraphDim, setFundamentalGraphDim] = useState((window.innerWidth*0.5))
+  const [fundamentalsGraphDim, setFundamentalGraphDim] = useState((window.innerWidth*0.85))
   let revenueData = {x: companyFundamentals.details.revenue.time, y: companyFundamentals.details.revenue.val};
   let incomeData = {x: companyFundamentals.details.income.time, y: companyFundamentals.details.income.val};
   let debtByAssetsData = {x: companyFundamentals.details.debtByAssets.time, y: companyFundamentals.details.debtByAssets.val};
