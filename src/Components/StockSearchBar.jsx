@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import secCompaniesList from "../secCompaniesList";
 const companyParaList = [{ParaName: "Revenues", Units:"USD"}, {ParaName: "NetIncomeLoss", Units:"USD"}, {ParaName: "Assets", Units:"USD"}, {ParaName: "Liabilities", Units:"USD"}, {ParaName: "StockholdersEquity", Units:"USD"}, {ParaName: "EarningsPerShareDiluted", Units:"USD/shares"}, {ParaName: "CommonStockSharesIssued", Units:"shares"}];
 // "LiabilitiesAndStockholdersEquity", "StockholdersEquity", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "EarningsPerShareBasicAndDiluted"
 
 const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, companyData}) => {
-
-    const [stockSearchText, setStockSearchText] = useState("");
+    const secCompaniesListFormatted = Object.values(secCompaniesList)
     const [stockSearchResults, setStockSearchResults] = useState([{Name:"", CIK:"0"}])  
-    const [companyList, setcompanyList] = useState([{title:"", ticker:"" ,CIK:"0000320193"}]) 
+    const [companyList, setcompanyList] = useState(secCompaniesListFormatted)
     const [stockSearchTextBoxFocus, setStockSearchTextBoxFocus] = useState(false);
     const [isLoadingCompanies, setIsLoadingCompanies] = useState(false)
     const inputRef = useRef();
@@ -65,7 +65,6 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                 let tempData = (data["Monthly Adjusted Time Series"])
                 let tempTimeStamps = Object.keys(tempData)
                 let tempStockVal = tempTimeStamps.map((timestamp)=>{
-                    // return ((Number(tempData[timestamp]["1. open"]) + Number(tempData[timestamp]["2. high"]) + Number(tempData[timestamp]["3. low"])+ Number(tempData[timestamp]["4. close"]))/4)
                     return (Number(tempData[timestamp]["5. adjusted close"]))
                 })
                 let tempStockValRaw = tempTimeStamps.map((timestamp)=>{
@@ -82,18 +81,11 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
 // Event Handlers ---------------------------------------------------------------------------------- 
 // TxtBox change triggers search of stock (ticker code or company name) matching input
     const handleChange = (event) => {
-    // setStockSearchText(event.target.value);
     const stockSearchTxt = event.target.value
-    // console.log(stockSearchTxt)
     setStockSearchResults(companyList.filter((company)=>{
         return ((company.title.toLowerCase().search(stockSearchTxt.toLowerCase()) !== -1) || (company.ticker.toLowerCase().search(stockSearchTxt.toLowerCase()) !== -1))
     }))
     }
-    // useEffect(()=>{
-    //     setStockSearchResults(companyList.filter((company)=>{
-    //         return ((company.title.toLowerCase().search(stockSearchText.toLowerCase()) !== -1) || (company.ticker.toLowerCase().search(stockSearchText.toLowerCase()) !== -1))
-    //     }))
-    // },[stockSearchText])
 
 // Click triggers fetch and all calc of company data
     const handleListClick=({cik, ticker, title})=>{
@@ -110,9 +102,6 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
     }
     const handleInputBoxBlur = () => {
         setTimeout(()=>{setStockSearchTextBoxFocus(false)},200)
-        // if ( (stockSearchText === ""))  {
-        // setStockSearchTextBoxFocus(false)
-        // }
     }
 
 
@@ -135,7 +124,7 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
     {
         isLoadingCompanies &&
         <div className="text-center">
-            Loading Comapany Names
+            Checking for new Comapany Names
             <div className="row justify-content-center align-items-center">
                 <div class="spinner-grow" role="status"></div>
                 <div class="spinner-grow" role="status"></div>
