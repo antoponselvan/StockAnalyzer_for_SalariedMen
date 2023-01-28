@@ -1,5 +1,5 @@
 # Stock Analyzer for SalaryMan
-[Link to Live Deployment](https://stock-analyzer-for-salaried-men.vercel.app/StockAnalyzer)  
+[Link to Live Deployment](https://stock-analyzer-for-salaried-men.vercel.app)  
 
 Picking right stock needs a lot of time for analysis and tracking. People with full time jobs dont have so much time. This app is built to help these salaried-people to pick the right stock that will give a good return over the long run
 
