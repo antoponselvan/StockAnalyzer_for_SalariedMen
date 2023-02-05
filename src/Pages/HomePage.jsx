@@ -12,8 +12,8 @@ const HomePage = () => {
           <img src={salaryManPic} className="mx-auto d-block w-20"></img>
         </div>
         <div className="col-sm col-md-5">
-        <h4 className="text-center mt-5"> Time - The luxorious commodity that SalaryMan lacks to do quality stock selection</h4>
-        <p className="text-start">We intend to be the best tool in salary man's aresnal to pick stocks that can give good long term returns with relative ease. We dont claim to spot stocks yielding 100X returns but (US listed) stocks that are stable and over long term can beat market indices by 2X+ </p>
+        <h4 className="text-center mt-5"> Time - The luxurious commodity that SalaryMan lacks to do quality stock selection</h4>
+        <p className="text-start">We intend to be the best tool in salary man's arsenal to pick stocks that can give good long term returns with relative ease. We dont claim to spot stocks yielding 100X returns but (US listed) stocks that are stable and over long term can beat market indices by 2X+ </p>
         
         </div>
       </div>
@@ -26,7 +26,7 @@ const HomePage = () => {
           <CardToolFeature id="B" imgSrc={valuationPic} title="Simple & effective Valuation technique" mainText="Trends to show key ratios - P/E and P/B to compare current stock price. A feature - not available free in other tools"/>   
         </div>
         <div className="col-sm col-md-3 mb-3">
-          <CardToolFeature id="C" imgSrc={safeguardingPic} title="Usage of Safeguarding factors" mainText="Stock market is un-tamable. To ensure ensure we dont go too wrong, some qualitative factors that avoid severe loss are presented"/>   
+          <CardToolFeature id="C" imgSrc={safeguardingPic} title="Usage of Safeguarding factors" mainText="Stock market is untamable. To ensure ensure we dont go too wrong, some qualitative factors that avoid severe loss are presented"/>   
         </div>
       
       </div>

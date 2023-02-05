@@ -121,7 +121,7 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
         </div>  
         <input onChange={handleChange} onFocus={handleInputBoxFocus} onBlur={handleInputBoxBlur} ref={inputRef} className="form-control" placeholder="Search (Name or Ticker Code)"/>         
     </div>
-    {
+    {/* {
         isLoadingCompanies &&
         <div className="text-center">
             Checking for new Company Names
@@ -129,10 +129,9 @@ const StockSearchBar = ({selectedStock, setSelectedStock, setCompanyData, compan
                 <div class="spinner-grow" role="status"></div>
                 <div class="spinner-grow" role="status"></div>
                 <div class="spinner-grow" role="status"></div>
-            </div>
-            
+            </div>            
         </div>
-    }
+    } */}
     </>
     )
     }
