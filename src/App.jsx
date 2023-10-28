@@ -287,7 +287,7 @@ function App() {
 
   return ( 
     <>
-      <h1 className='ms-auto text-center bg-dark text-white p-3'>SalaryMan's Stock Analyzer</h1>      
+      <h1 className='ms-auto text-center bg-dark text-white p-3'>SalaryMan's Stock Analyzer!</h1>      
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainLayout/>}>
